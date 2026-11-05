@@ -32,6 +32,11 @@
         </span>
       }
     }
+    @if (ext.isExtension()) {
+      <button type="button" class="btn small" (click)="ext.openInNewTab()" title="Open ATS Resume Builder in a full browser tab">
+        Full tab
+      </button>
+    }
     <app-theme-toggle />
   </div>
 </header>

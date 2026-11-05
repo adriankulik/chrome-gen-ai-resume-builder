@@ -4,6 +4,7 @@ import { LucideChevronsLeft } from '@lucide/angular';
 import { ButtonComponent } from '../button/button.component';
 import { CollapsibleComponent } from '../collapsible/collapsible.component';
 import { AiService } from '../core/ai.service';
+import { ExtensionService } from '../core/extension.service';
 import { LayoutService } from '../core/layout.service';
 import { VaultService } from '../core/vault.service';
 import { normalize, textHasKeyword } from '../core/keyword-matcher';
@@ -29,6 +30,7 @@ const LOOSE_BULLET_CAP = 24;
 export class TriageComponent {
   readonly vs = inject(VaultService);
   readonly ai = inject(AiService);
+  readonly ext = inject(ExtensionService);
   readonly layout = inject(LayoutService);
   readonly collapseIcon = LucideChevronsLeft.icon;
 
@@ -37,6 +39,7 @@ export class TriageComponent {
   readonly keywords = signal<string[]>([]);
   readonly source = signal<'ai' | 'fallback' | null>(null);
   readonly analyzing = signal(false);
+  readonly extracting = signal(false);
   readonly error = signal('');
 
   /** Editable proposals per role id. */
@@ -104,6 +107,25 @@ export class TriageComponent {
     setTimeout(() => {
       if (this.jd().trim() && !this.analyzing()) this.analyze();
     }, 50);
+  }
+
+  /** One-click extract from the active tab when running as a Chrome extension. */
+  async extractFromActiveTab(): Promise<void> {
+    this.extracting.set(true);
+    this.error.set('');
+    try {
+      const text = await this.ext.extractFromActiveTab();
+      if (text) {
+        this.jd.set(text);
+        await this.analyze();
+      } else {
+        this.error.set('Could not extract job description from active tab. Highlight the text or paste directly.');
+      }
+    } catch (e) {
+      this.error.set(e instanceof Error ? e.message : 'Extraction failed.');
+    } finally {
+      this.extracting.set(false);
+    }
   }
 
   /** Relevant skills first (validated against the vault), then the remaining vault skills. */

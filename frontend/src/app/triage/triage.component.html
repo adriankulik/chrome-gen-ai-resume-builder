@@ -17,7 +17,19 @@
 
   <section class="card card--jd">
     <div class="jd-field">
-      <label for="jd">Target job description</label>
+      <div class="card-head">
+        <label for="jd">Target job description</label>
+        @if (ext.isExtension()) {
+          <button
+            type="button"
+            class="btn small"
+            [disabled]="extracting() || analyzing()"
+            (click)="extractFromActiveTab()"
+          >
+            {{ extracting() ? 'Extracting…' : 'Extract from tab' }}
+          </button>
+        }
+      </div>
       <textarea
         id="jd"
         [rows]="triageOpen() ? 8 : 16"

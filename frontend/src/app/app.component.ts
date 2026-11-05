@@ -3,6 +3,7 @@ import { LucideChevronsRight } from '@lucide/angular';
 import { ButtonComponent } from './button/button.component';
 import { LayoutService } from './core/layout.service';
 import { AiService } from './core/ai.service';
+import { ExtensionService } from './core/extension.service';
 import { VaultEditorComponent } from './vault-editor/vault-editor.component';
 import { TriageComponent } from './triage/triage.component';
 import { ThemeToggleComponent } from './theme/theme-toggle.component';
@@ -18,6 +19,7 @@ type Tab = 'vault' | 'triage' | 'preview';
 })
 export class AppComponent {
   readonly ai = inject(AiService);
+  readonly ext = inject(ExtensionService);
   readonly layout = inject(LayoutService);
   readonly expandIcon = LucideChevronsRight.icon;
   readonly tab = signal<Tab>('vault');

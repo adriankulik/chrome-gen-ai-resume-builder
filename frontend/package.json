@@ -7,6 +7,8 @@
     "dev": "ng serve --host 0.0.0.0",
     "build": "ng build",
     "build:gh-pages": "ng build --base-href /chrome-gen-ai-resume-builder/",
+    "build:extension": "ng build --base-href ./",
+    "pack:extension": "npm run build:extension && (cd dist/frontend && zip -FSr ../chrome-resume-builder-extension.zip .)",
     "watch": "ng build --watch --configuration development",
     "test": "ng test --watch=false --browsers=ChromeHeadlessCI",
     "lint": "ng lint"
@@ -41,6 +43,7 @@
     "@angular/cli": "^21.0.0",
     "@angular/compiler-cli": "^21.0.0",
     "@eslint/js": "^10.0.1",
+    "@types/chrome": "^0.3.7",
     "@types/jasmine": "~5.1.0",
     "eslint": "^10.4.0",
     "jasmine-core": "~5.1.0",
