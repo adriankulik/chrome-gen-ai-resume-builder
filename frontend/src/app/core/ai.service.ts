@@ -2,6 +2,7 @@
 import { Injectable, signal } from '@angular/core';
 import { MasterVault, normalizeVault } from './vault.model';
 import { FallbackTriage, fallbackTriage } from './keyword-matcher';
+import { fallbackParseResume } from './fallback-parser';
 
 /* Minimal typings for the Chrome Prompt API (window.LanguageModel). */
 interface LMSession {
@@ -242,27 +243,35 @@ export class AiService {
     return (res.proposedBullets ?? []).map((b) => b.trim()).filter(Boolean).slice(0, 2);
   }
 
-  /** Converts pasted raw resume text into a MasterVault. Throws if AI is unavailable. */
+  /** Converts pasted raw resume text into a MasterVault. Uses Chrome built-in AI when available, otherwise falls back to heuristic parsing. */
   async parseResume(text: string, base: MasterVault): Promise<MasterVault> {
+    if (this.availability() === 'unavailable' || !this.lm) {
+      return fallbackParseResume(text, base);
+    }
     const system =
       'You convert unstructured resume text into structured JSON. Copy text faithfully; do not invent facts. Keep each achievement as a separate bullet string. ' +
       'Use dates like "2022-03" or "Present" when possible. ' +
       LANGUAGE_RULE;
-    const raw = await this.promptJson<any>(system, text, vaultSchema);
-    // Assign deterministic IDs (bullets arrive as plain strings).
-    let b = 100;
-    const withIds = {
-      ...raw,
-      experience: (raw.experience ?? []).map((e: any, i: number) => ({
-        ...e,
-        id: `exp_${i + 1}`,
-        bullets: (e.bullets ?? []).map((t: string) => ({ id: `b_${++b}`, text: t })),
-      })),
-      education: (raw.education ?? []).map((e: any, i: number) => ({ ...e, id: `edu_${i + 1}` })),
-      settings: base.settings,
-    };
-    const vault = normalizeVault(withIds);
-    vault.contact.photoDataUrl = base.contact.photoDataUrl;
-    return vault;
+    try {
+      const raw = await this.promptJson<any>(system, text, vaultSchema);
+      // Assign deterministic IDs (bullets arrive as plain strings).
+      let b = 100;
+      const withIds = {
+        ...raw,
+        experience: (raw.experience ?? []).map((e: any, i: number) => ({
+          ...e,
+          id: `exp_${i + 1}`,
+          bullets: (e.bullets ?? []).map((t: string) => ({ id: `b_${++b}`, text: t })),
+        })),
+        education: (raw.education ?? []).map((e: any, i: number) => ({ ...e, id: `edu_${i + 1}` })),
+        settings: base.settings,
+      };
+      const vault = normalizeVault(withIds);
+      vault.contact.photoDataUrl = base.contact.photoDataUrl;
+      return vault;
+    } catch (e) {
+      console.warn('AI resume parsing failed, using heuristic fallback', e);
+      return fallbackParseResume(text, base);
+    }
   }
 }

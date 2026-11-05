@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "ATS Resume Builder with On-Device AI",
+  "short_name": "ATS Resume AI",
+  "version": "1.0.0",
+  "description": "Local-first ATS Resume Builder powered by Chrome Built-in AI (Gemini Nano). Tailor and export resumes directly beside any job posting.",
+  "permissions": [
+    "storage",
+    "sidePanel",
+    "activeTab",
+    "scripting"
+  ],
+  "action": {
+    "default_title": "Open ATS Resume Builder",
+    "default_icon": {
+      "16": "assets/icons/icon-16.png",
+      "48": "assets/icons/icon-48.png",
+      "128": "assets/icons/icon-128.png"
+    }
+  },
+  "side_panel": {
+    "default_path": "index.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "icons": {
+    "16": "assets/icons/icon-16.png",
+    "48": "assets/icons/icon-48.png",
+    "128": "assets/icons/icon-128.png"
+  }
+}

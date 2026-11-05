@@ -199,25 +199,65 @@ fieldset.role {
   &__bullet { line-height: v.$lh-snug; } }
 
 .card-head { display: flex; justify-content: space-between; align-items: center; gap: v.$sp-3; }
+.card-head__left { display: flex; align-items: center; gap: v.$sp-2; flex-wrap: wrap; }
 .summary-text { font-size: v.$fs-sm; color: var(--c-ink-secondary); line-height: v.$lh-snug;
   display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .bullet-edit li > [app-button] { flex: 0 0 auto; margin-top: v.$sp-1; }
 
 .onboarding { border-color: var(--c-accent); }
 
+@media (max-width: 600px) {
+  .app-header {
+    padding: v.$sp-2 v.$sp-3;
+    gap: v.$sp-2;
+
+    h1 {
+      font-size: v.$fs-sm;
+      white-space: nowrap;
+    }
+  }
+
+  .header-branding {
+    gap: 0;
+    p.tagline {
+      display: none;
+    }
+  }
+
+  .header-actions {
+    gap: v.$sp-2;
+  }
+
+  .ai-lozenge {
+    padding: 2px 8px;
+    font-size: 10px;
+    &__text {
+      max-width: 90px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .panel-body {
+    padding: v.$sp-3;
+    gap: v.$sp-3;
+  }
+}
+
 // ---- Collapsible vault and triage panels (desktop only; tabs layout handles small screens) ----
 .vault-rail { display: none; }
 
 @media (min-width: 1101px) {
   .workspace {
-    &.vault-collapsed {
+    &.triage-collapsed {
       grid-template-columns: 52px minmax(300px, 1fr) minmax(420px, 1.2fr);
     }
 
-    &.triage-collapsed {
+    &.vault-collapsed {
       grid-template-columns: minmax(300px, 1fr) 52px minmax(420px, 1.2fr);
     }
 
+    &.triage-collapsed.vault-collapsed,
     &.vault-collapsed.triage-collapsed {
       grid-template-columns: 52px 52px 1fr;
     }
