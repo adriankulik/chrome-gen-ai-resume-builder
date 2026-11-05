@@ -1,0 +1,40 @@
+@if (showLabel()) {
+  <span class="dropdown__caption" [id]="uid + '-label'">{{ label() }}</span>
+}
+<button
+  type="button"
+  class="dropdown__trigger"
+  role="combobox"
+  aria-haspopup="listbox"
+  [attr.aria-expanded]="open()"
+  [attr.aria-controls]="uid + '-list'"
+  [attr.aria-activedescendant]="open() ? uid + '-opt-' + active() : null"
+  [attr.aria-label]="showLabel() ? null : label()"
+  [attr.aria-labelledby]="showLabel() ? uid + '-label' : null"
+  (click)="toggle()"
+  (keydown)="onKeydown($event)"
+>
+  <span class="dropdown__value">{{ selected()?.label }}</span>
+  <svg lucideIcon [lucideIcon]="chevron" [size]="14" class="dropdown__chevron" [class.dropdown__chevron--open]="open()"></svg>
+</button>
+@if (open()) {
+  <ul class="dropdown__list" role="listbox" [id]="uid + '-list'" [attr.aria-label]="label()">
+    @for (opt of options(); track opt.value; let i = $index) {
+      <li
+        role="option"
+        class="dropdown__option"
+        [id]="uid + '-opt-' + i"
+        [class.dropdown__option--active]="i === active()"
+        [attr.aria-selected]="opt.value === value()"
+        (mouseenter)="active.set(i)"
+        (mousedown)="$event.preventDefault()"
+        (click)="choose(opt)"
+      >
+        <span>{{ opt.label }}</span>
+        @if (opt.value === value()) {
+          <svg lucideIcon [lucideIcon]="check" [size]="14"></svg>
+        }
+      </li>
+    }
+  </ul>
+}

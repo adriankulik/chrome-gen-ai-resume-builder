@@ -1,0 +1,26 @@
+<section class="collapsible" [class.collapsible--open]="open()">
+  <div class="collapsible__header">
+    <h3 class="collapsible__heading">
+      <button
+        type="button"
+        class="collapsible__trigger"
+        [attr.aria-expanded]="open()"
+        [attr.aria-controls]="uid"
+        (click)="open.set(!open())"
+      >
+        <span class="collapsible__title">{{ title() }}</span>
+        @if (badge()) {
+          <span class="collapsible__badge" [class.collapsible__badge--warn]="badgeWarn()">{{ badge() }}</span>
+        }
+        <svg lucideIcon [lucideIcon]="chevron" [size]="16" class="collapsible__chevron"></svg>
+      </button>
+    </h3>
+  </div>
+  @if (open()) {
+    <hr class="collapsible__divider" aria-hidden="true" />
+    <div class="collapsible__body" [id]="uid">
+      <ng-content></ng-content>
+    </div>
+  }
+</section>
+

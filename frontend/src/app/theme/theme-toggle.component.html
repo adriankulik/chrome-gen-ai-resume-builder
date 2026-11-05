@@ -1,0 +1,11 @@
+<button
+  app-button
+  type="button"
+  variant="secondary"
+  size="sm"
+  [iconLeading]="nextIcon()"
+  [iconOnly]="true"
+  (click)="toggle()"
+  [attr.aria-label]="'Switch to ' + nextLabel() + ' theme'"
+  [attr.aria-pressed]="isDark()"
+></button>

@@ -1,0 +1,52 @@
+@use "../../styles/variables" as v;
+
+:host { display: block; }
+
+.toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: v.$sp-4;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  &:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 4px; border-radius: v.$radius-sm; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.toggle__track {
+  position: relative;
+  flex: 0 0 auto;
+  width: 36px;
+  height: 20px;
+  border-radius: v.$radius-pill;
+  border: 1px solid var(--c-chip-border);
+  background: var(--c-chip-bg);
+  transition: background v.$dur-base v.$ease-out, border-color v.$dur-base v.$ease-out;
+}
+
+.toggle__thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--c-ink-secondary);
+  transition: transform v.$dur-base v.$ease-out, background v.$dur-base v.$ease-out;
+}
+
+.toggle[aria-checked="true"] {
+  .toggle__track { background: var(--c-accent); border-color: var(--c-accent); }
+  .toggle__thumb { transform: translateX(16px); background: var(--c-bg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toggle__track, .toggle__thumb { transition: none; }
+}

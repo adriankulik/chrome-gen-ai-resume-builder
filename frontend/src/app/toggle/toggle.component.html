@@ -1,0 +1,9 @@
+<button type="button" class="toggle" role="switch" [attr.aria-checked]="checked()" [disabled]="disabled()" (click)="flip()">
+  <span class="setting__text">
+    <span class="setting__label">{{ label() }}</span>
+    @if (description()) {
+      <span class="setting__desc">{{ description() }}</span>
+    }
+  </span>
+  <span class="toggle__track" aria-hidden="true"><span class="toggle__thumb"></span></span>
+</button>

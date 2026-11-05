@@ -1,0 +1,88 @@
+@use "../../styles/variables" as v;
+@use "../../styles/mixins" as m;
+
+:host {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: v.$sp-1;
+  min-width: 0;
+}
+
+.dropdown__caption {
+  @include m.label-mono;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.dropdown__trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: v.$sp-2;
+  height: 36px;
+  width: 100%;
+  padding: 0 v.$sp-4;
+  border-radius: v.$radius-pill;
+  border: 1px solid var(--c-chip-border);
+  background: var(--c-chip-bg);
+  color: var(--c-ink-primary);
+  font-family: v.$font-mono;
+  font-size: v.$fs-xs;
+  letter-spacing: v.$ls-wide;
+  text-transform: lowercase;
+  cursor: pointer;
+  transition:
+    border-color v.$dur-base v.$ease-out,
+    background v.$dur-base v.$ease-out;
+
+  &:hover { border-color: var(--c-rule-strong); }
+  &:focus-visible { outline: 2px solid var(--c-accent); outline-offset: 2px; }
+  &[aria-expanded="true"] { border-color: var(--c-accent); }
+}
+
+.dropdown__chevron {
+  flex: 0 0 auto;
+  color: var(--c-ink-muted);
+  transition: transform v.$dur-base v.$ease-out;
+  &--open { transform: rotate(180deg); }
+}
+
+.dropdown__list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: v.$z-overlay;
+  margin-top: v.$sp-1;
+  padding: v.$sp-1;
+  list-style: none;
+  border: 1px solid var(--c-rule-strong);
+  border-radius: v.$radius-md;
+  background: var(--c-bg-elevated);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.dropdown__option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: v.$sp-2;
+  padding: v.$sp-2 v.$sp-3;
+  border-radius: v.$radius-sm;
+  font-family: v.$font-mono;
+  font-size: v.$fs-xs;
+  letter-spacing: v.$ls-wide;
+  text-transform: lowercase;
+  color: var(--c-ink-secondary);
+  cursor: pointer;
+
+  &--active { background: var(--c-chip-bg); color: var(--c-ink-primary); }
+  &[aria-selected="true"] { color: var(--c-accent); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dropdown__chevron, .dropdown__trigger { transition: none; }
+}

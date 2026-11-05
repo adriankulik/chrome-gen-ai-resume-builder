@@ -1,0 +1,66 @@
+@use 'styles/variables' as v;
+@use 'styles/theme';
+@use 'styles/fonts';
+@use 'styles/app';
+@use 'styles/sheet';
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%;
+  background: var(--c-bg);
+  transition: background-color v.$dur-slow v.$ease-out;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+body {
+  font-family: v.$font-sans;
+  font-size: v.$fs-base;
+  line-height: v.$lh-normal;
+  color: var(--c-ink-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: var(--c-accent);
+  color: var(--c-bg);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: v.$sp-4;
+  z-index: v.$z-loader + 1;
+  padding: v.$sp-2 v.$sp-4;
+  background: var(--c-accent);
+  color: var(--c-bg);
+  font-family: v.$font-sans;
+  font-size: v.$fs-sm;
+  font-weight: v.$fw-medium;
+  text-decoration: none;
+  border-radius: 0 0 v.$radius-sm v.$radius-sm;
+  outline: 2px solid transparent;
+
+  &:focus {
+    top: 0;
+    outline-color: var(--c-accent);
+    outline-offset: 2px;
+  }
+}
+

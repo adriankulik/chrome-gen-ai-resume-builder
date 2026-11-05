@@ -1,0 +1,44 @@
+@use "../../styles/variables" as v;
+
+:host {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 100%;
+}
+
+.panel-body--triage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+
+  &.panel-body--triage-collapsed {
+    .card--jd {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+
+      .jd-field {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+
+        textarea {
+          flex: 1 1 auto;
+          min-height: 280px;
+          height: 100%;
+          resize: vertical;
+        }
+      }
+    }
+  }
+}
+
+.jd-field {
+  display: flex;
+  flex-direction: column;
+  gap: v.$sp-1;
+}

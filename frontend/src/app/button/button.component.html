@@ -1,0 +1,19 @@
+@if (iconLeading) {
+  <svg
+    lucideIcon
+    [lucideIcon]="iconLeading"
+    [size]="iconPx"
+    class="app-button__icon app-button__icon--lead"
+  ></svg>
+}
+@if (!iconOnly) {
+  <span class="app-button__label"><ng-content></ng-content></span>
+}
+@if (iconTrailing) {
+  <svg
+    lucideIcon
+    [lucideIcon]="iconTrailing"
+    [size]="iconPx"
+    class="app-button__icon app-button__icon--trail"
+  ></svg>
+}

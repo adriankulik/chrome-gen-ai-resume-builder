@@ -1,0 +1,178 @@
+@use "../../styles/variables" as v;
+@use "../../styles/mixins" as m;
+
+// =========================================================================
+// app-button — attribute-selector component; :host == the native button/<a>.
+// =========================================================================
+
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: v.$sp-2;
+  border-radius: v.$radius-pill;
+  font-family: v.$font-mono;
+  letter-spacing: v.$ls-wide;
+  text-transform: lowercase;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--c-ink-primary);
+  transition:
+    background v.$dur-base v.$ease-out,
+    border-color v.$dur-base v.$ease-out,
+    color v.$dur-base v.$ease-out,
+    transform v.$dur-fast v.$ease-out;
+
+  &:focus-visible {
+    outline: 2px solid var(--c-accent);
+    outline-offset: 2px;
+  }
+
+  &:disabled,
+  &[aria-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  .app-button__label {
+    line-height: 1;
+  }
+
+  .app-button__icon {
+    flex: 0 0 auto;
+    display: inline-block;
+  }
+
+  // ---- sizes ----
+  &.app-button--sm {
+    height: 28px;
+    padding: 0 v.$sp-3;
+    font-size: v.$fs-xs;
+  }
+
+  &.app-button--md {
+    height: 36px;
+    padding: 0 v.$sp-4;
+    font-size: v.$fs-xs;
+  }
+
+  &.app-button--lg {
+    height: 44px;
+    padding: 0 v.$sp-5;
+    font-size: v.$fs-sm;
+  }
+
+  &.app-button--icon-only {
+    &.app-button--sm {
+      width: 28px;
+      padding: 0;
+    }
+    &.app-button--md {
+      width: 36px;
+      padding: 0;
+    }
+    &.app-button--lg {
+      width: 44px;
+      padding: 0;
+    }
+  }
+
+  // ---- variants ----
+  &.app-button--primary {
+    background: var(--c-ink-primary);
+    color: var(--c-bg);
+    border-color: var(--c-ink-primary);
+
+    &:hover:not(:disabled) {
+      background: var(--c-ink-secondary);
+      border-color: var(--c-ink-secondary);
+    }
+  }
+
+  &.app-button--secondary {
+    background: var(--c-chip-bg);
+    color: var(--c-ink-primary);
+    border-color: var(--c-chip-border);
+    backdrop-filter: blur(v.$blur-md);
+
+    &:hover:not(:disabled) {
+      border-color: var(--c-rule-strong);
+    }
+  }
+
+  &.app-button--ghost {
+    background: transparent;
+    color: var(--c-ink-secondary);
+    border-color: transparent;
+    backdrop-filter: blur(v.$blur-md);
+
+    &:hover:not(:disabled) {
+      color: var(--c-ink-primary);
+      background: var(--c-chip-bg);
+    }
+  }
+
+  // Round dismiss / remove (X). Always a perfect circle regardless of size.
+  &.app-button--close {
+    border-radius: 50%;
+    padding: 0;
+    background: var(--c-chip-bg);
+    color: var(--c-ink-secondary);
+    border-color: var(--c-chip-border);
+
+    &.app-button--sm { width: 28px; }
+    &.app-button--md { width: 36px; }
+    &.app-button--lg { width: 44px; }
+
+    &:hover:not(:disabled) {
+      color: var(--c-accent);
+      border-color: var(--c-accent);
+    }
+  }
+}
+
+// ---- responsive icon-only (label hidden below breakpoint) ----
+@mixin -icon-only-at-size($h) {
+  padding: 0;
+  width: $h;
+
+  .app-button__label {
+    display: none;
+  }
+}
+
+@include m.mq-down(v.$bp-sm) {
+  :host.app-button--icon-only-below-sm {
+    &.app-button--sm {
+      @include -icon-only-at-size(28px);
+    }
+    &.app-button--md {
+      @include -icon-only-at-size(36px);
+    }
+    &.app-button--lg {
+      @include -icon-only-at-size(44px);
+    }
+  }
+}
+
+@include m.mq-down(v.$bp-md) {
+  :host.app-button--icon-only-below-md {
+    &.app-button--sm {
+      @include -icon-only-at-size(28px);
+    }
+    &.app-button--md {
+      @include -icon-only-at-size(36px);
+    }
+    &.app-button--lg {
+      @include -icon-only-at-size(44px);
+    }
+  }
+}

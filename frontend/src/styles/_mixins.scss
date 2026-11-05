@@ -1,0 +1,72 @@
+@use 'variables' as v;
+
+// =========================================================================
+// Mixins — shared layout / type fragments.
+// =========================================================================
+
+// Generic media-query helpers.
+@mixin mq-up($bp) {
+  @media (min-width: $bp) { @content; }
+}
+@mixin mq-down($bp) {
+  @media (max-width: ($bp - 1px)) { @content; }
+}
+
+// Mono label — used for dates, section titles, small captions.
+@mixin label-mono {
+  font-family: v.$font-mono;
+  font-size: v.$fs-xs;
+  letter-spacing: v.$ls-wide;
+  text-transform: uppercase;
+  color: var(--c-ink-muted);
+}
+
+// Leading-line row. Lays out children as:
+//   [label]  ............................  [value]
+// The dotted leader fills the gap between label and value.
+//
+// Usage:
+//   .row { @include leading-line; }
+//   .row > .label  { ... }
+//   .row > .leader { ... }   // empty span — pseudo-line lives here
+//   .row > .value  { ... }
+@mixin leading-line(
+  $thickness: 1px,
+  $style: dotted,
+  $gap: v.$sp-3,
+) {
+  display: flex;
+  align-items: baseline;
+  gap: $gap;
+  width: 100%;
+
+  > .leader {
+    flex: 1 1 auto;
+    min-width: v.$sp-5;
+    border-bottom: $thickness $style var(--c-ink-faint);
+    transform: translateY(-0.25em);
+    opacity: 0.85;
+  }
+
+  > .label,
+  > .value {
+    flex: 0 0 auto;
+  }
+}
+
+// Full-width horizontal divider line spanning across a container.
+@mixin divider-line(
+  $color: var(--c-rule),
+  $thickness: 1px,
+  $style: solid,
+) {
+  display: block;
+  width: 100%;
+  height: 0;
+  border: 0;
+  border-top: $thickness $style $color;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: content-box;
+}
+

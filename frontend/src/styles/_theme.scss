@@ -1,0 +1,60 @@
+@use 'variables' as v;
+
+// =========================================================================
+// Semantic theme tokens — emitted as CSS custom properties so a single
+// `data-theme` swap on <html> re-skins the entire UI without re-render.
+//
+// Components must reference colors via `var(--c-...)`. Raw $palette values
+// from variables.scss should only appear in this file.
+// =========================================================================
+
+@mixin -dark-tokens {
+  --c-bg:               #{v.$dark-bg};
+  --c-bg-elevated:      #{v.$dark-bg-elevated};
+  --c-bg-translucent:   #{v.$dark-bg-translucent};
+  --c-ink-primary:      #{v.$dark-ink-primary};
+  --c-ink-secondary:    #{v.$dark-ink-secondary};
+  --c-ink-muted:        #{v.$dark-ink-muted};
+  --c-ink-faint:        #{v.$dark-ink-faint};
+  --c-rule:             #{v.$dark-rule};
+  --c-rule-strong:      #{v.$dark-rule-strong};
+  --c-chip-bg:          #{v.$dark-chip-bg};
+  --c-chip-border:      #{v.$dark-chip-border};
+  --c-chip-ink:         #{v.$dark-chip-ink};
+  --c-accent:           #{v.$dark-accent};
+  --c-link:             #{v.$dark-link};
+  --c-status-ok-bg:     #{v.$dark-status-ok-bg};
+  --c-status-ok-border: #{v.$dark-status-ok-border};
+  --c-status-ok-ink:    #{v.$dark-status-ok-ink};
+  --c-poster-overlay:   #{v.$dark-poster-overlay};
+  --c-poster-shimmer:   #{v.$dark-poster-shimmer};
+  --hero-logo-filter:   brightness(0) invert(1);
+}
+
+@mixin -light-tokens {
+  --c-bg:               #{v.$light-bg};
+  --c-bg-elevated:      #{v.$light-bg-elevated};
+  --c-bg-translucent:   #{v.$light-bg-translucent};
+  --c-ink-primary:      #{v.$light-ink-primary};
+  --c-ink-secondary:    #{v.$light-ink-secondary};
+  --c-ink-muted:        #{v.$light-ink-muted};
+  --c-ink-faint:        #{v.$light-ink-faint};
+  --c-rule:             #{v.$light-rule};
+  --c-rule-strong:      #{v.$light-rule-strong};
+  --c-chip-bg:          #{v.$light-chip-bg};
+  --c-chip-border:      #{v.$light-chip-border};
+  --c-chip-ink:         #{v.$light-chip-ink};
+  --c-accent:           #{v.$light-accent};
+  --c-link:             #{v.$light-link};
+  --c-status-ok-bg:     #{v.$light-status-ok-bg};
+  --c-status-ok-border: #{v.$light-status-ok-border};
+  --c-status-ok-ink:    #{v.$light-status-ok-ink};
+  --c-poster-overlay:   #{v.$light-poster-overlay};
+  --c-poster-shimmer:   #{v.$light-poster-shimmer};
+  --hero-logo-filter:   brightness(0);
+}
+
+:root,
+:root[data-theme='dark'] { @include -dark-tokens; }
+
+:root[data-theme='light'] { @include -light-tokens; }

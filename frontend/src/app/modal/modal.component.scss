@@ -1,0 +1,49 @@
+@use "../../styles/variables" as v;
+@use "../../styles/mixins" as m;
+
+.modal {
+  margin: auto;
+  padding: 0;
+  width: min(640px, calc(100vw - #{v.$sp-5}));
+  max-height: min(85vh, 760px);
+  border: 1px solid var(--c-rule-strong);
+  border-radius: v.$radius-md;
+  background: var(--c-bg-elevated);
+  color: var(--c-ink-primary);
+
+  &::backdrop {
+    background: var(--c-bg-translucent);
+    backdrop-filter: blur(v.$blur-md);
+  }
+}
+
+.modal__panel {
+  display: flex;
+  flex-direction: column;
+  max-height: inherit;
+}
+
+.modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: v.$sp-3;
+  padding: v.$sp-3 v.$sp-4 v.$sp-3 v.$sp-5;
+  border-bottom: 1px solid var(--c-rule);
+}
+
+.modal__title {
+  font-family: v.$font-sans;
+  font-size: v.$fs-sm;
+  font-weight: v.$fw-semibold;
+  color: var(--c-ink-primary);
+  line-height: v.$lh-tight;
+}
+
+.modal__body {
+  display: flex;
+  flex-direction: column;
+  gap: v.$sp-3;
+  padding: v.$sp-5;
+  overflow-y: auto;
+}

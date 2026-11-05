@@ -1,0 +1,81 @@
+@use "../../styles/variables" as v;
+@use "../../styles/mixins" as m;
+
+:host { display: block; }
+
+.collapsible {
+  background: var(--c-bg-elevated);
+  border: 1px solid var(--c-rule);
+  border-radius: v.$radius-md;
+  overflow: hidden;
+  transition: border-color v.$dur-base v.$ease-out;
+}
+
+.collapsible__header {
+  padding: v.$sp-4;
+}
+
+.collapsible__heading {
+  margin: 0;
+  font-size: v.$fs-sm;
+  font-weight: v.$fw-semibold;
+  line-height: v.$lh-tight;
+}
+
+.collapsible__trigger {
+  display: flex;
+  align-items: center;
+  gap: v.$sp-3;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--c-ink-primary);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--c-accent);
+    outline-offset: 4px;
+    border-radius: v.$radius-sm;
+  }
+}
+
+.collapsible__title {
+  flex: 1;
+}
+
+.collapsible__badge {
+  @include m.label-mono;
+  &--warn { color: var(--c-accent); }
+}
+
+.collapsible__chevron {
+  flex: 0 0 auto;
+  color: var(--c-ink-muted);
+  transition: transform v.$dur-base v.$ease-out;
+}
+
+.collapsible:not(.collapsible--open) .collapsible__chevron {
+  transform: rotate(-90deg);
+}
+
+// Full-width horizontal divider line spanning across the entire width of the card/div
+.collapsible__divider {
+  @include m.divider-line;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.collapsible__body {
+  display: flex;
+  flex-direction: column;
+  gap: v.$sp-3;
+  padding: v.$sp-4;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .collapsible__chevron { transition: none; }
+}
+

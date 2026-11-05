@@ -1,0 +1,138 @@
+// =========================================================================
+// Design tokens — single source of truth for type, spacing, motion, etc.
+//
+// Color tokens are split in two layers:
+//   1. Raw palette swatches per theme  ($dark-* / $light-*)
+//   2. Semantic CSS custom properties  (--c-*)  emitted in `theme.scss`
+//
+// Components must consume colors via `var(--c-bg)` etc. — never the raw
+// palette — so a single `[data-theme]` swap re-skins the whole app.
+// =========================================================================
+
+// ---- palette: dark theme ----
+$dark-bg: #0a0b0f;
+$dark-bg-elevated: #11131a;
+$dark-bg-translucent: rgba(10, 11, 15, 0.62);
+$dark-ink-primary: #f2f0ec;
+$dark-ink-secondary: #a8aab3;
+$dark-ink-muted: #9094a0;
+$dark-ink-faint: #3d4049;
+$dark-rule: rgba(255, 255, 255, 0.08);
+$dark-rule-strong: rgba(255, 255, 255, 0.16);
+$dark-chip-bg: rgba(255, 255, 255, 0.06);
+$dark-chip-border: rgba(255, 255, 255, 0.1);
+$dark-chip-ink: #d6d7dc;
+$dark-accent: #c7b8ff;
+$dark-link: #c7b8ff;
+// Status ok (green) for lozenge
+$dark-status-ok-bg: rgba(74, 222, 128, 0.14);
+$dark-status-ok-border: rgba(74, 222, 128, 0.32);
+$dark-status-ok-ink: #4ade80;
+// Dark theme monochrome loading tokens (10-12% white fade + soft white shimmer)
+$dark-poster-overlay: rgba(255, 255, 255, 0.12);
+$dark-poster-shimmer: rgba(255, 255, 255, 0.18);
+
+// ---- palette: light theme ----
+$light-bg: #ecebe7;
+$light-bg-elevated: #f5f4f0;
+$light-bg-translucent: rgba(236, 235, 231, 0.7);
+$light-ink-primary: #15171c;
+$light-ink-secondary: #4a4d57;
+$light-ink-muted: #54565f;
+$light-ink-faint: #b8b6b0;
+$light-rule: rgba(21, 23, 28, 0.1);
+$light-rule-strong: rgba(21, 23, 28, 0.2);
+$light-chip-bg: rgba(21, 23, 28, 0.04);
+$light-chip-border: rgba(21, 23, 28, 0.12);
+$light-chip-ink: #2f3138;
+$light-accent: #5a3eb8;
+$light-link: #5a3eb8;
+// Status ok (green) for lozenge
+$light-status-ok-bg: rgba(22, 163, 74, 0.1);
+$light-status-ok-border: rgba(22, 163, 74, 0.28);
+$light-status-ok-ink: #15803d;
+// Light theme monochrome loading tokens (10-12% charcoal fade + crisp highlight shimmer)
+$light-poster-overlay: rgba(21, 23, 28, 0.12);
+$light-poster-shimmer: rgba(255, 255, 255, 0.55);
+
+// ---- typography: families ----
+$font-sans:
+  "Poppins",
+  -apple-system,
+  BlinkMacSystemFont,
+  "Segoe UI",
+  sans-serif;
+$font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+// ---- typography: sizes ----
+$fs-xs: 11px;
+$fs-sm: 13px;
+$fs-base: 15px;
+$fs-md: 17px;
+$fs-lg: 22px;
+$fs-xl: 32px;
+$fs-2xl: 48px;
+$fs-3xl: 72px;
+
+// ---- typography: weight ----
+$fw-regular: 400;
+$fw-medium: 500;
+$fw-semibold: 600;
+
+// ---- typography: leading ----
+$lh-tight: 1.15;
+$lh-snug: 1.35;
+$lh-normal: 1.55;
+$lh-loose: 1.75;
+
+// ---- typography: tracking ----
+$ls-tight: -0.01em;
+$ls-normal: 0;
+$ls-wide: 0.08em;
+$ls-wider: 0.22em;
+
+// ---- spacing scale (4px base) ----
+$sp-1: 4px;
+$sp-2: 8px;
+$sp-3: 12px;
+$sp-4: 16px;
+$sp-5: 24px;
+$sp-6: 32px;
+$sp-7: 48px;
+$sp-8: 64px;
+$sp-9: 96px;
+$sp-10: 128px;
+
+// ---- layout ----
+$page-max: 1180px;
+$page-gutter: 32px;
+$page-gutter-sm: 20px;
+$navbar-height: 56px;
+
+// ---- breakpoints ----
+$bp-sm: 540px;
+$bp-md: 820px;
+$bp-lg: 1080px;
+
+// ---- motion ----
+$ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+$ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+$dur-fast: 180ms;
+$dur-base: 320ms;
+$dur-slow: 600ms;
+$dur-xslow: 900ms;
+
+// ---- radius ----
+$radius-sm: 6px;
+$radius-md: 10px;
+$radius-pill: 999px;
+
+// ---- background blur ----
+$blur-sm: 4px;
+$blur-md: 8px;
+
+// ---- z-index ----
+$z-base: 1;
+$z-navbar: 50;
+$z-overlay: 100;
+$z-loader: 1000;

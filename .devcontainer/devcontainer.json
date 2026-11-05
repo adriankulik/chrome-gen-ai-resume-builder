@@ -1,0 +1,36 @@
+{
+  "name": "resume-builder-chrome-webapp",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "remoteUser": "node",
+
+  // Fixed path (the host folder name contains spaces).
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/resume-builder-chrome-webapp,type=bind",
+  "workspaceFolder": "/workspaces/resume-builder-chrome-webapp",
+
+  // The host's frontend/node_modules contains macOS-native binaries (esbuild,
+  // rollup, etc.) that won't run on Linux. Shadow it with a named volume so
+  // the container gets its own Linux install and the host copy is untouched.
+  "mounts": [
+    "source=resume-builder-chrome-webapp-node-modules,target=${containerWorkspaceFolder}/frontend/node_modules,type=volume"
+  ],
+
+  "postCreateCommand": "sudo chown node:node frontend/node_modules && cd frontend && npm ci",
+
+  "forwardPorts": [4200, 9876],
+  "portsAttributes": {
+    "4200": { "label": "ng serve", "onAutoForward": "notify" },
+    "9876": { "label": "karma", "onAutoForward": "silent" }
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "angular.ng-template",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode"
+      ]
+    }
+  }
+}

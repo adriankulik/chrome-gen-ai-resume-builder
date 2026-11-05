@@ -1,0 +1,164 @@
+@let v = vs.vault();
+<div class="panel-body preview-panel">
+  <div class="toolbar no-print">
+    <div class="toolbar__head">
+      <h2 class="panel-title">Live A4 Preview</h2>
+      <button type="button" class="btn primary" (click)="print()">Export PDF</button>
+    </div>
+
+    @if (overflow()) {
+      <p class="msg error" role="alert">
+        Content exceeds one A4 page. Deselect some bullets{{ s().strictOnePage ? '' : ' or enable the 1-page enforcer' }}.
+      </p>
+    }
+
+    <app-collapsible title="Resume settings" [(open)]="settingsOpen">
+    <div class="settings">
+      <div class="setting">
+        <span class="setting__text">
+          <span class="setting__label">Theme</span>
+          <span class="setting__desc">Typography and accent colour</span>
+        </span>
+        <app-dropdown class="setting__control" label="Theme" [showLabel]="false" [options]="themes" [value]="s().theme" (valueChange)="setTheme($event)" />
+      </div>
+
+      <div class="setting">
+        <app-toggle label="1-page enforcer" description="Compact type and spacing to fit one A4 page"
+          [checked]="s().strictOnePage" (checkedChange)="set('strictOnePage', $event)" />
+      </div>
+
+      <div class="setting">
+        <app-toggle label="Show photo"
+          [description]="vs.vault().contact.photoDataUrl ? 'Profile picture in the header' : 'Upload a photo in the vault first'"
+          [disabled]="!vs.vault().contact.photoDataUrl"
+          [checked]="s().showPhoto" (checkedChange)="set('showPhoto', $event)" />
+      </div>
+
+      <div class="setting">
+        <app-toggle label="GDPR consent clause" description="Adds the recruitment data-processing consent footer"
+          [checked]="s().includeRodoClause" (checkedChange)="set('includeRodoClause', $event)" />
+      </div>
+      @if (s().includeRodoClause) {
+        <div class="setting setting--nested">
+          <label class="setting__text" for="rodo-company">
+            <span class="setting__label">Company name</span>
+            <span class="setting__desc">Optional — named in the consent text</span>
+          </label>
+          <input id="rodo-company" type="text" class="setting__control" placeholder="Acme Inc."
+            [ngModel]="s().rodoCompanyName" (ngModelChange)="set('rodoCompanyName', $event)" />
+        </div>
+      }
+    </div>
+    </app-collapsible>
+
+    <p class="hint">Export opens the print dialog: choose “Save as PDF” (headers &amp; footers are disabled automatically).</p>
+  </div>
+
+  <div class="stage" #stage>
+    <div class="sheet-wrap" [style.width.px]="793.7 * scale()" [style.height.px]="sheetHeight() * scale()">
+      <article
+        #sheet
+        class="sheet"
+        [class.compact]="s().strictOnePage"
+        [attr.data-theme]="s().theme"
+        [style.transform]="'scale(' + scale() + ')'"
+      >
+        <header class="r-header">
+          @if (showPhoto()) {
+            <img class="r-photo" [src]="v.contact.photoDataUrl" alt="" />
+          }
+          <div class="r-id">
+            <h1>{{ v.contact.fullName || 'Your Name' }}</h1>
+            <div class="r-contact">
+              @if (primaryContact().length) {
+                <div class="r-contact__row r-contact__row--primary">
+                  @for (c of primaryContact(); track $index) {
+                    <span class="r-contact__item">{{ c }}</span>
+                  }
+                </div>
+              }
+              @if (contactLinks().length) {
+                <div class="r-contact__row r-contact__row--links">
+                  @for (l of contactLinks(); track $index) {
+                    <a class="r-contact__item r-contact__link" [href]="l.url" target="_blank" rel="noopener noreferrer">{{ l.display }}</a>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        </header>
+
+        @if (summary()) {
+          <section class="r-section">
+            <h2>Summary</h2>
+            <p>{{ summary() }}</p>
+          </section>
+        }
+
+        @if (vs.selectedExperience().length) {
+          <section class="r-section">
+            <h2>Experience</h2>
+            @for (e of vs.selectedExperience(); track e.id) {
+              <div class="r-role">
+                <h3>
+                  <span class="r-entity">
+                    @if (e.role) {
+                      <span class="r-title">{{ e.role }}</span>
+                    }
+                    @if (e.role && e.company) {
+                      <span class="r-sep" aria-hidden="true">·</span>
+                    }
+                    @if (e.company) {
+                      <span class="r-company">{{ e.company }}</span>
+                    }
+                  </span>
+                  <span class="r-dates">{{ fmt(e.startDate) }}{{ e.startDate && e.endDate ? ' – ' : '' }}{{ fmt(e.endDate) }}</span>
+                </h3>
+                <ul>
+                  @for (b of e.bullets; track b.id) {
+                    <li>{{ b.text }}</li>
+                  }
+                </ul>
+              </div>
+            }
+          </section>
+        }
+
+        @if (v.education.length) {
+          <section class="r-section">
+            <h2>Education</h2>
+            @for (ed of v.education; track ed.id) {
+              <div class="r-edu">
+                <h3>
+                  <span class="r-entity">
+                    @if (ed.degree) {
+                      <span class="r-title">{{ ed.degree }}</span>
+                    }
+                    @if (ed.degree && ed.institution) {
+                      <span class="r-sep" aria-hidden="true">·</span>
+                    }
+                    @if (ed.institution) {
+                      <span class="r-company">{{ ed.institution }}</span>
+                    }
+                  </span>
+                  <span class="r-dates">{{ ed.year }}</span>
+                </h3>
+              </div>
+            }
+          </section>
+        }
+
+        @if (skills().length) {
+          <section class="r-section">
+            <h2>Skills</h2>
+            <p>{{ skills().join(', ') }}</p>
+          </section>
+        }
+
+        @if (s().includeRodoClause) {
+          <footer class="r-rodo">{{ rodoText() }}</footer>
+        }
+      </article>
+    </div>
+  </div>
+</div>

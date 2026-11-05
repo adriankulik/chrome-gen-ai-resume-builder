@@ -1,0 +1,18 @@
+<dialog #dlg class="modal" [attr.aria-label]="title()" (close)="closed.emit()" (click)="onBackdrop($event)">
+  <div class="modal__panel">
+    <header class="modal__header">
+      <h2 class="modal__title">{{ title() }}</h2>
+      <button
+        app-button
+        type="button"
+        variant="close"
+        size="sm"
+        [iconOnly]="true"
+        [iconLeading]="closeIcon"
+        aria-label="Close"
+        (click)="dismiss()"
+      ></button>
+    </header>
+    <div class="modal__body"><ng-content></ng-content></div>
+  </div>
+</dialog>

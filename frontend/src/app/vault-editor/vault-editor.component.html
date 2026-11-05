@@ -1,0 +1,164 @@
+@let v = vs.vault();
+<div class="panel-body">
+  <div class="card-head">
+    <h2 class="panel-title">Master Career Vault</h2>
+    <div class="row wrap">
+      <button type="button" class="btn small" (click)="dialog.set('backup')">Backup &amp; import</button>
+      <button app-button type="button" variant="secondary" size="sm" [iconOnly]="true" [iconLeading]="collapseIcon"
+        class="collapse-btn" aria-label="Collapse master career vault" [attr.aria-expanded]="true" (click)="layout.setVaultCollapsed(true)"></button>
+    </div>
+  </div>
+  @if (message(); as m) {
+    <p class="msg" [class.error]="m.kind === 'error'" role="status">{{ m.text }}</p>
+  }
+
+  <app-collapsible title="Parse raw resume text" [(open)]="parseOpen">
+    <p class="hint">Paste your existing CV text to automatically extract and populate your career vault.</p>
+    <textarea rows="6" aria-label="Raw resume text" placeholder="Paste your existing CV text here…" [ngModel]="rawText()" (ngModelChange)="setRawText($event)"></textarea>
+    <button type="button" class="btn primary" [disabled]="parsing() || !rawText().trim() || !ai.isAvailable" (click)="parseRaw()">
+      {{ parsing() ? 'Parsing…' : 'Parse raw resume text' }}
+    </button>
+    @if (!ai.isAvailable) {
+      <p class="hint">Needs Chrome built-in AI, which isn't available right now — edit the sections below manually instead.</p>
+    }
+  </app-collapsible>
+
+  <section class="card card--divided">
+    <div class="card-head"><h3>Contact</h3></div>
+    <hr class="divider" aria-hidden="true" />
+    <div class="card-body">
+      <label>Full name <input type="text" [(ngModel)]="v.contact.fullName" (ngModelChange)="vs.touch()" /></label>
+      <label>Email <input type="email" [(ngModel)]="v.contact.email" (ngModelChange)="vs.touch()" /></label>
+      <label>Phone <input type="tel" [(ngModel)]="v.contact.phone" (ngModelChange)="vs.touch()" /></label>
+      <label>Location <input type="text" [(ngModel)]="v.contact.location" (ngModelChange)="vs.touch()" /></label>
+      <label>Links (comma separated)
+        <input type="text" [ngModel]="v.contact.links.join(', ')" (change)="setLinks($any($event.target).value)" />
+      </label>
+      <div class="photo-row">
+        @if (v.contact.photoDataUrl) {
+          <img class="thumb" [src]="v.contact.photoDataUrl" alt="Profile photo preview" />
+          <button type="button" class="btn small" (click)="removePhoto()">Remove photo</button>
+        }
+        <label class="btn small file-btn">
+          {{ v.contact.photoDataUrl ? 'Change photo' : 'Upload photo' }}
+          <input type="file" accept="image/*" hidden (change)="onPhoto($event)" />
+        </label>
+      </div>
+    </div>
+  </section>
+
+  <section class="card card--divided">
+    <div class="card-head">
+      <h3>Summary</h3>
+      <button type="button" class="btn small" (click)="dialog.set('summary')">Edit</button>
+    </div>
+    <hr class="divider" aria-hidden="true" />
+    <div class="card-body">
+      <p class="summary-text">{{ v.summary || 'No summary yet.' }}</p>
+    </div>
+  </section>
+
+  <section class="card card--divided">
+    <div class="card-head">
+      <h3>Experience</h3>
+      <button type="button" class="btn small" (click)="dialog.set('experience')">Edit</button>
+    </div>
+    <hr class="divider" aria-hidden="true" />
+    <div class="card-body">
+      <p class="hint">{{ v.experience.length }} roles · {{ bulletCount }} bullets</p>
+    </div>
+  </section>
+
+  <section class="card card--divided">
+    <div class="card-head">
+      <h3>Education</h3>
+      <button type="button" class="btn small" (click)="dialog.set('education')">Edit</button>
+    </div>
+    <hr class="divider" aria-hidden="true" />
+    <div class="card-body">
+      <p class="hint">{{ v.education.length }} entries</p>
+    </div>
+  </section>
+
+  <section class="card card--divided">
+    <div class="card-head">
+      <h3>Skills</h3>
+      <button type="button" class="btn small" (click)="dialog.set('skills')">Edit</button>
+    </div>
+    <hr class="divider" aria-hidden="true" />
+    <div class="card-body">
+      <p class="summary-text">{{ v.skills.join(', ') || 'No skills yet.' }}</p>
+    </div>
+  </section>
+</div>
+
+@switch (dialog()) {
+  @case ('backup') {
+    <app-modal title="Backup &amp; import" (closed)="dialog.set(null)">
+      <div class="row wrap">
+        <button type="button" class="btn" (click)="exportVault()">Export (.json)</button>
+        <button type="button" class="btn" (click)="triggerImport()">Import (.json)</button>
+        <input #importInput type="file" accept="application/json,.json" hidden (change)="importVault($event)" />
+      </div>
+      <p class="hint">Data is stored only in this browser (localStorage). Export regularly.</p>
+    </app-modal>
+  }
+
+  @case ('summary') {
+    <app-modal title="Edit summary" (closed)="dialog.set(null)">
+      <textarea rows="8" aria-label="Summary" [ngModel]="vs.vault().summary" (ngModelChange)="setSummary($event)"></textarea>
+    </app-modal>
+  }
+
+  @case ('experience') {
+    <app-modal title="Edit experience" (closed)="dialog.set(null)">
+      @for (e of vs.vault().experience; track e.id) {
+        <fieldset class="role">
+          <legend>{{ e.id }}</legend>
+          <label>Role <input type="text" [(ngModel)]="e.role" (ngModelChange)="vs.touch()" /></label>
+          <label>Company <input type="text" [(ngModel)]="e.company" (ngModelChange)="vs.touch()" /></label>
+          <div class="row">
+            <label>Start <input type="text" placeholder="YYYY-MM" [(ngModel)]="e.startDate" (ngModelChange)="vs.touch()" /></label>
+            <label>End <input type="text" placeholder="YYYY-MM or Present" [(ngModel)]="e.endDate" (ngModelChange)="vs.touch()" /></label>
+          </div>
+          <ul class="bullet-edit">
+            @for (b of e.bullets; track b.id) {
+              <li>
+                <textarea rows="2" [attr.aria-label]="'Bullet ' + b.id" [(ngModel)]="b.text" (ngModelChange)="vs.touch()"></textarea>
+                <button app-button type="button" variant="close" size="sm" [iconOnly]="true" [iconLeading]="removeIcon" [attr.aria-label]="'Delete bullet ' + b.id" (click)="vs.removeBullet(e.id, b.id)"></button>
+              </li>
+            }
+          </ul>
+          <div class="row">
+            <button type="button" class="btn small" (click)="vs.addBullet(e.id)">+ Bullet</button>
+            <button type="button" class="btn small danger" (click)="vs.removeExperience(e.id)">Delete role</button>
+          </div>
+        </fieldset>
+      }
+      <button type="button" class="btn" (click)="vs.addExperience()">+ Add role</button>
+    </app-modal>
+  }
+
+  @case ('education') {
+    <app-modal title="Edit education" (closed)="dialog.set(null)">
+      @for (ed of vs.vault().education; track ed.id) {
+        <fieldset class="role">
+          <legend>{{ ed.id }}</legend>
+          <label>Degree <input type="text" [(ngModel)]="ed.degree" (ngModelChange)="vs.touch()" /></label>
+          <label>Institution <input type="text" [(ngModel)]="ed.institution" (ngModelChange)="vs.touch()" /></label>
+          <label>Years <input type="text" [(ngModel)]="ed.year" (ngModelChange)="vs.touch()" /></label>
+          <button type="button" class="btn small danger" (click)="vs.removeEducation(ed.id)">Delete</button>
+        </fieldset>
+      }
+      <button type="button" class="btn" (click)="vs.addEducation()">+ Add education</button>
+    </app-modal>
+  }
+
+  @case ('skills') {
+    <app-modal title="Edit skills" (closed)="dialog.set(null)">
+      <label>Comma separated
+        <textarea rows="6" [ngModel]="vs.vault().skills.join(', ')" (change)="setSkills($any($event.target).value)"></textarea>
+      </label>
+    </app-modal>
+  }
+}
