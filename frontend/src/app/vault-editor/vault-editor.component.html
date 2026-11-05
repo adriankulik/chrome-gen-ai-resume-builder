@@ -1,7 +1,10 @@
 @let v = vs.vault();
 <div class="panel-body">
   <div class="card-head">
-    <h2 class="panel-title">Master Career Vault</h2>
+    <div class="card-head__left">
+      <button type="button" class="btn small ghost" (click)="layout.setActiveTab('triage')">&larr; Back to Job Match</button>
+      <h2 class="panel-title">Master Career Vault</h2>
+    </div>
     <div class="row wrap">
       <button type="button" class="btn small" (click)="dialog.set('backup')">Backup &amp; import</button>
       <button app-button type="button" variant="secondary" size="sm" [iconOnly]="true" [iconLeading]="collapseIcon"
@@ -98,9 +101,10 @@
       <div class="row wrap">
         <button type="button" class="btn" (click)="exportVault()">Export (.json)</button>
         <button type="button" class="btn" (click)="triggerImport()">Import (.json)</button>
+        <button type="button" class="btn" (click)="vs.startOnboarding(); dialog.set(null)">Re-run onboarding wizard</button>
         <input #importInput type="file" accept="application/json,.json" hidden (change)="importVault($event)" />
       </div>
-      <p class="hint">Data is stored only in this browser (localStorage). Export regularly.</p>
+      <p class="hint">Data is stored locally on this device. Export regularly to keep backups.</p>
     </app-modal>
   }
 

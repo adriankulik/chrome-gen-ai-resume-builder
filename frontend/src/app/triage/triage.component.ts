@@ -41,6 +41,42 @@ export class TriageComponent {
   readonly analyzing = signal(false);
   readonly extracting = signal(false);
   readonly error = signal('');
+  readonly showManualInput = signal(false);
+
+  get bulletCount(): number {
+    return this.vs.vault().experience.reduce((sum, e) => sum + e.bullets.length, 0);
+  }
+
+  editProfile(): void {
+    this.layout.setActiveTab('vault');
+  }
+
+  viewPreview(): void {
+    this.layout.setActiveTab('preview');
+  }
+
+  exportPdf(): void {
+    const prev = document.title;
+    const name = this.vs.vault().contact.fullName.trim();
+    document.title = name ? `${name} - Resume` : 'Resume';
+    window.print();
+    document.title = prev;
+  }
+
+  resetJob(): void {
+    this.jd.set('');
+    this.keywords.set([]);
+    this.source.set(null);
+    this.error.set('');
+    this.proposals.set({});
+    this.vs.tailoredSummary.set(null);
+    this.vs.tailoredSkills.set(null);
+    this.vs.selectAll();
+  }
+
+  toggleManualInput(): void {
+    this.showManualInput.update((v) => !v);
+  }
 
   /** Editable proposals per role id. */
   readonly proposals = signal<Record<string, string[] | undefined>>({});

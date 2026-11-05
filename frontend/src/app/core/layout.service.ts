@@ -4,6 +4,8 @@ import { StorageService } from './storage.service';
 const VAULT_KEY = 'ui-vault-collapsed';
 const TRIAGE_KEY = 'ui-triage-collapsed';
 
+export type WorkspaceTab = 'vault' | 'triage' | 'preview';
+
 /** Workspace layout state. Panels 1 & 2 can collapse to slim rails. */
 @Injectable({ providedIn: 'root' })
 export class LayoutService {
@@ -11,6 +13,11 @@ export class LayoutService {
 
   readonly vaultCollapsed = signal(false);
   readonly triageCollapsed = signal(false);
+  readonly activeTab = signal<WorkspaceTab>('triage');
+
+  setActiveTab(tab: WorkspaceTab): void {
+    this.activeTab.set(tab);
+  }
 
   constructor() {
     this.storage.get<boolean>(VAULT_KEY).then((v) => {
