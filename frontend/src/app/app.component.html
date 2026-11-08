@@ -104,7 +104,7 @@
 @if (aiSettingsOpen()) {
   <app-modal title="AI Engine &amp; Local Model Settings" (closed)="aiSettingsOpen.set(false)">
     <app-ai-settings #aiSettings />
-    <div style="display: flex; justify-content: flex-end; gap: var(--space-2, 0.5rem); margin-top: var(--space-3, 0.75rem);">
+    <div class="row" style="justify-content: flex-end; margin-top: 12px;">
       <button app-button type="button" variant="ghost" (click)="aiSettingsOpen.set(false)">Cancel</button>
       <button app-button type="button" variant="primary" (click)="aiSettings.saveAndClose(closeAiSettings)">Save settings</button>
     </div>
