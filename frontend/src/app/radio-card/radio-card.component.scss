@@ -1,0 +1,59 @@
+@use '../../styles/variables' as v;
+
+:host {
+  display: block;
+}
+
+.radio-card {
+  display: flex;
+  align-items: flex-start;
+  gap: v.$sp-3;
+  padding: v.$sp-3 v.$sp-4;
+  border-radius: v.$radius-sm;
+  border: 1px solid var(--c-chip-border);
+  background: var(--c-chip-bg);
+  color: var(--c-ink-primary);
+  cursor: pointer;
+  user-select: none;
+  transition: border-color v.$dur-fast v.$ease-out, background-color v.$dur-fast v.$ease-out;
+
+  input[type='radio'] {
+    margin-top: 3px;
+    accent-color: var(--c-accent);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  &:hover:not(.disabled) {
+    border-color: var(--c-rule-strong);
+  }
+
+  &.selected {
+    border-color: var(--c-accent);
+    background: var(--c-bg-elevated);
+  }
+
+  &.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__title {
+    font-size: v.$fs-sm;
+    font-weight: v.$fw-semibold;
+    color: var(--c-ink-primary);
+    line-height: v.$lh-tight;
+  }
+
+  &__desc {
+    font-size: v.$fs-xs;
+    color: var(--c-ink-muted);
+    line-height: v.$lh-snug;
+  }
+}

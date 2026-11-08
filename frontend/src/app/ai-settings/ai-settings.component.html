@@ -7,35 +7,29 @@
   <fieldset class="ai-settings__section">
     <legend class="ai-settings__legend">AI Provider Engine</legend>
     <div class="provider-options">
-      <label class="provider-card" [class.selected]="provider() === 'auto'">
-        <input type="radio" name="aiProvider" value="auto" [checked]="provider() === 'auto'" (change)="provider.set('auto')" />
-        <div class="provider-card__content">
-          <span class="provider-card__title">Auto (Recommended)</span>
-          <span class="provider-card__desc">
-            Uses Chrome Built-in AI (Gemini Nano) if available; otherwise automatically uses your local model runner or keyword fallback.
-          </span>
-        </div>
-      </label>
+      <app-radio-card
+        label="Auto (Recommended)"
+        description="Uses Chrome Built-in AI (Gemini Nano) if available; otherwise automatically uses your local model runner or keyword fallback."
+        value="auto"
+        name="aiProvider"
+        [(selectedValue)]="provider"
+      />
 
-      <label class="provider-card" [class.selected]="provider() === 'chrome-nano'">
-        <input type="radio" name="aiProvider" value="chrome-nano" [checked]="provider() === 'chrome-nano'" (change)="provider.set('chrome-nano')" />
-        <div class="provider-card__content">
-          <span class="provider-card__title">Chrome Built-in AI (Gemini Nano)</span>
-          <span class="provider-card__desc">
-            Chrome's native on-device model. Zero setup, zero memory outside of Chrome.
-          </span>
-        </div>
-      </label>
+      <app-radio-card
+        label="Chrome Built-in AI (Gemini Nano)"
+        description="Chrome's native on-device model. Zero setup, zero memory outside of Chrome."
+        value="chrome-nano"
+        name="aiProvider"
+        [(selectedValue)]="provider"
+      />
 
-      <label class="provider-card" [class.selected]="provider() === 'local-openai'">
-        <input type="radio" name="aiProvider" value="local-openai" [checked]="provider() === 'local-openai'" (change)="provider.set('local-openai')" />
-        <div class="provider-card__content">
-          <span class="provider-card__title">Local Model Runner (Ollama, LM Studio, etc.)</span>
-          <span class="provider-card__desc">
-            Connect to any local OpenAI-compatible endpoint running on your machine.
-          </span>
-        </div>
-      </label>
+      <app-radio-card
+        label="Local Model Runner (Ollama, LM Studio, etc.)"
+        description="Connect to any local OpenAI-compatible endpoint running on your machine."
+        value="local-openai"
+        name="aiProvider"
+        [(selectedValue)]="provider"
+      />
     </div>
   </fieldset>
 

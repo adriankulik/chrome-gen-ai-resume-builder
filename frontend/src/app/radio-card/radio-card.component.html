@@ -1,0 +1,16 @@
+<label class="radio-card" [class.selected]="isSelected()" [class.disabled]="disabled()" (click)="select()">
+  <input
+    type="radio"
+    [name]="name()"
+    [value]="value()"
+    [checked]="isSelected()"
+    [disabled]="disabled()"
+    (change)="select()"
+  />
+  <div class="radio-card__content">
+    <span class="radio-card__title">{{ label() }}</span>
+    @if (description()) {
+      <span class="radio-card__desc">{{ description() }}</span>
+    }
+  </div>
+</label>
