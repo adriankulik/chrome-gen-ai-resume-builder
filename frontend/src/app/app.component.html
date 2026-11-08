@@ -1,11 +1,11 @@
 <a class="skip-link" href="#workspace">Skip to workspace</a>
 <header class="app-header no-print">
-  <h1 class="visually-hidden">LocalResume</h1>
+  <h1 class="visually-hidden">Local AI Resume</h1>
   <div class="header-actions">
     <app-ai-lozenge (openSettings)="aiSettingsOpen.set(true)" />
     <div class="header-controls">
       @if (ext.isExtension()) {
-        <button app-button type="button" variant="secondary" size="sm" (click)="ext.openInNewTab()" title="Open ATS Resume Builder in a full browser tab">
+        <button app-button type="button" variant="secondary" size="sm" (click)="ext.openInNewTab()" title="Open Local AI Resume in a full browser tab">
           Full tab
         </button>
       }

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "LocalResume - On-Device GenAI Resume Builder",
-  "short_name": "LocalResume",
+  "name": "Local AI Resume - On-Device GenAI Resume Builder",
+  "short_name": "Local AI Resume",
   "version": "1.0.0",
   "description": "Provider-agnostic, on-device GenAI resume tailor focused on Chrome's built-in Gemini Nano with support for local runners (Ollama, LM Studio).",
   "permissions": [
@@ -15,7 +15,7 @@
     "<all_urls>"
   ],
   "action": {
-    "default_title": "Open LocalResume",
+    "default_title": "Open Local AI Resume",
     "default_icon": {
       "16": "assets/icons/icon-16.png",
       "48": "assets/icons/icon-48.png",

@@ -6,5 +6,5 @@ if (chrome.sidePanel?.setPanelBehavior) {
 }
 
 chrome.runtime.onInstalled.addListener(() => {
-  console.log('ATS Resume Builder Chrome Extension installed.');
+  console.log('Local AI Resume Chrome Extension installed.');
 });

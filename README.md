@@ -1,4 +1,4 @@
-# LocalResume
+# Local AI Resume
 
 > Provider-agnostic, on-device GenAI resume builder focused on Chrome's built-in Gemini Nano with seamless support for local model runners (Ollama, LM Studio).
 
@@ -6,7 +6,7 @@
 
 ## Overview
 
-**LocalResume** is a 100% private, client-side ATS resume tailor and builder (Angular 21, no cloud backend). Your career data never leaves your computer.
+**Local AI Resume** is a 100% private, client-side ATS resume tailor and builder (Angular 21, no cloud backend). Your career data never leaves your computer.
 
 - **Panel 1 – Vault:** contact/photo, experience, education, skills CRUD; raw-text parsing (with on-device AI) and JSON export/import in a Backup popup; summary, experience, education and skills edited in popups (`app-modal`). English only. Persisted in localStorage or `chrome.storage.local`.
 - **Panel 2 – Job match:** job description input (analysis auto-runs on paste, or 1-click DOM extract in the Chrome extension), 1:1 keyword ↔ bullet matching, generated summary and skills, bullet checkboxes (AI selection, keyword fallback), per-role bullet proposer.
@@ -75,6 +75,6 @@ This application is built with a **zero-maintenance dual-target architecture**: 
 - `npm run build`: Production build into `dist/frontend`
 - `npm run build:gh-pages`: Builds with base-href configured for GitHub Pages
 - `npm run build:extension`: Builds with relative base-href (`./`) for Chrome Extension
-- `npm run pack:extension`: Builds and packages the extension into `dist/local-resume-extension.zip`
+- `npm run pack:extension`: Builds and packages the extension into `dist/local-ai-resume-extension.zip`
 - `npm test`: Runs unit tests via Karma + headless Chrome
 - `npm run lint`: Runs ESLint
