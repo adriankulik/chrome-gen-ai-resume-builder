@@ -1,31 +1,31 @@
 <a class="skip-link" href="#workspace">Skip to workspace</a>
 <header class="app-header no-print">
-  <h1 class="visually-hidden">ATS Resume Builder</h1>
+  <h1 class="visually-hidden">LocalResume</h1>
   <div class="header-actions">
     @switch (ai.availability()) {
       @case ('available') {
-        <span class="ai-lozenge ai-lozenge--ok" title="Chrome built-in AI (Gemini Nano) ready and running locally">
+        <button type="button" class="ai-lozenge ai-lozenge--ok" (click)="aiSettingsOpen.set(true)" title="Click to configure AI engine (Gemini Nano, Ollama, LM Studio)">
           <span class="ai-lozenge__dot" aria-hidden="true"></span>
-          <span class="ai-lozenge__text">Nano ready</span>
-        </span>
+          <span class="ai-lozenge__text">{{ ai.activeProviderLabel() }}</span>
+        </button>
       }
       @case ('downloading') {
-        <span class="ai-lozenge ai-lozenge--warn" title="Downloading Chrome built-in AI model">
+        <button type="button" class="ai-lozenge ai-lozenge--warn" (click)="aiSettingsOpen.set(true)" title="Downloading Chrome built-in AI model — click to configure">
           <span class="ai-lozenge__dot" aria-hidden="true"></span>
           <span class="ai-lozenge__text">Downloading… @if (ai.downloadProgress() !== null) { {{ (ai.downloadProgress()! * 100).toFixed(0) }}% }</span>
-        </span>
+        </button>
       }
       @case ('downloadable') {
-        <span class="ai-lozenge ai-lozenge--warn" title="Chrome AI model is downloadable">
+        <button type="button" class="ai-lozenge ai-lozenge--warn" (click)="aiSettingsOpen.set(true)" title="Chrome AI model is downloadable — click to configure">
           <span class="ai-lozenge__dot" aria-hidden="true"></span>
           <span class="ai-lozenge__text">Downloadable</span>
-        </span>
+        </button>
       }
       @default {
-        <span class="ai-lozenge ai-lozenge--muted" title="Using local keyword matching">
+        <button type="button" class="ai-lozenge ai-lozenge--muted" (click)="aiSettingsOpen.set(true)" title="Using local keyword matching — click to connect Ollama/LM Studio">
           <span class="ai-lozenge__dot" aria-hidden="true"></span>
-          <span class="ai-lozenge__text">Local matching</span>
-        </span>
+          <span class="ai-lozenge__text">{{ ai.activeProviderLabel() }}</span>
+        </button>
       }
     }
     <div class="header-controls">
@@ -99,4 +99,14 @@
       <app-preview />
     </section>
   </main>
+}
+
+@if (aiSettingsOpen()) {
+  <app-modal title="AI Engine &amp; Local Model Settings" (closed)="aiSettingsOpen.set(false)">
+    <app-ai-settings #aiSettings />
+    <div style="display: flex; justify-content: flex-end; gap: var(--space-2, 0.5rem); margin-top: var(--space-3, 0.75rem);">
+      <button app-button type="button" variant="ghost" (click)="aiSettingsOpen.set(false)">Cancel</button>
+      <button app-button type="button" variant="primary" (click)="aiSettings.saveAndClose(closeAiSettings)">Save settings</button>
+    </div>
+  </app-modal>
 }

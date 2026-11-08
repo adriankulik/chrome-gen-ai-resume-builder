@@ -1,0 +1,141 @@
+<div class="ai-settings">
+  <p class="ai-settings__intro">
+    Choose how you want to run AI for ATS matching, resume parsing, and bullet tailoring.
+    Everything runs 100% on your device with complete privacy.
+  </p>
+
+  <fieldset class="ai-settings__section">
+    <legend class="ai-settings__legend">AI Provider Engine</legend>
+    <div class="provider-options">
+      <label class="provider-card" [class.selected]="provider() === 'auto'">
+        <input type="radio" name="aiProvider" value="auto" [checked]="provider() === 'auto'" (change)="provider.set('auto')" />
+        <div class="provider-card__content">
+          <span class="provider-card__title">Auto (Recommended)</span>
+          <span class="provider-card__desc">
+            Uses Chrome Built-in AI (Gemini Nano) if available; otherwise automatically uses your local model runner or keyword fallback.
+          </span>
+        </div>
+      </label>
+
+      <label class="provider-card" [class.selected]="provider() === 'chrome-nano'">
+        <input type="radio" name="aiProvider" value="chrome-nano" [checked]="provider() === 'chrome-nano'" (change)="provider.set('chrome-nano')" />
+        <div class="provider-card__content">
+          <span class="provider-card__title">Chrome Built-in AI (Gemini Nano)</span>
+          <span class="provider-card__desc">
+            Chrome's native on-device model. Zero setup, zero memory outside of Chrome.
+          </span>
+        </div>
+      </label>
+
+      <label class="provider-card" [class.selected]="provider() === 'local-openai'">
+        <input type="radio" name="aiProvider" value="local-openai" [checked]="provider() === 'local-openai'" (change)="provider.set('local-openai')" />
+        <div class="provider-card__content">
+          <span class="provider-card__title">Local Model Runner (Ollama, LM Studio, etc.)</span>
+          <span class="provider-card__desc">
+            Connect to any local OpenAI-compatible endpoint running on your machine.
+          </span>
+        </div>
+      </label>
+    </div>
+  </fieldset>
+
+  @if (provider() === 'local-openai' || provider() === 'auto') {
+    <fieldset class="ai-settings__section">
+      <legend class="ai-settings__legend">Local Model Endpoint Settings</legend>
+
+      <div class="preset-chips">
+        <span class="preset-label">Quick presets:</span>
+        @for (preset of presets; track preset.name) {
+          <button
+            app-button
+            type="button"
+            variant="ghost"
+            size="sm"
+            (click)="applyPreset(preset)"
+            [title]="preset.hint"
+          >
+            {{ preset.name }}
+          </button>
+        }
+      </div>
+
+      <div class="form-grid">
+        <label class="form-field">
+          <span class="form-label">Endpoint URL</span>
+          <input
+            type="url"
+            class="form-input"
+            placeholder="http://localhost:11434/v1"
+            [ngModel]="localEndpoint()"
+            (ngModelChange)="localEndpoint.set($event)"
+          />
+          <span class="form-hint">Ollama: port 11434 · LM Studio: port 1234 · OMLX/llama.cpp: port 8080</span>
+        </label>
+
+        <label class="form-field">
+          <span class="form-label">Model Name</span>
+          <input
+            type="text"
+            class="form-input"
+            placeholder="llama3.2"
+            [ngModel]="localModel()"
+            (ngModelChange)="localModel.set($event)"
+          />
+        </label>
+
+        <label class="form-field">
+          <span class="form-label">API Key / Token (Optional)</span>
+          <input
+            type="password"
+            class="form-input"
+            placeholder="Leave empty for standard local runners"
+            [ngModel]="localApiKey()"
+            (ngModelChange)="localApiKey.set($event)"
+          />
+        </label>
+      </div>
+
+      <div class="test-row">
+        <button
+          app-button
+          type="button"
+          variant="secondary"
+          size="sm"
+          [disabled]="testing() || !localEndpoint().trim()"
+          (click)="runTestConnection()"
+        >
+          {{ testing() ? 'Testing connection…' : 'Test connection' }}
+        </button>
+
+        @if (testResult(); as res) {
+          <div class="test-feedback" [class.success]="res.ok" [class.error]="!res.ok">
+            <span>{{ res.message }}</span>
+            @if (res.ok && res.models.length > 0) {
+              <div class="models-list">
+                <span class="models-label">Detected models:</span>
+                @for (m of res.models; track m) {
+                  <button
+                    type="button"
+                    class="model-chip"
+                    [class.active]="localModel() === m"
+                    (click)="selectModel(m)"
+                    title="Click to select this model"
+                  >
+                    {{ m }}
+                  </button>
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </fieldset>
+  }
+
+  <div class="privacy-note">
+    <span class="privacy-note__icon" aria-hidden="true">🔒</span>
+    <span>
+      Zero cloud dependency: resume bullet points and job descriptions are processed directly inside your browser or via your local runner.
+    </span>
+  </div>
+</div>
