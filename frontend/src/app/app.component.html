@@ -36,23 +36,6 @@
     [class.triage-collapsed]="layout.triageCollapsed()"
     [attr.data-tab]="tab()"
   >
-    <section class="panel panel-triage no-print" [class.collapsed]="layout.triageCollapsed()" aria-label="Job description and AI triage">
-      <div class="vault-rail triage-rail">
-        <button
-          app-button
-          type="button"
-          variant="secondary"
-          size="sm"
-          [iconOnly]="true"
-          [iconLeading]="expandIcon"
-          aria-label="Expand job description and AI triage"
-          [attr.aria-expanded]="false"
-          (click)="layout.setTriageCollapsed(false)"
-        ></button>
-        <span class="vault-rail__label">Job Match &amp; Triage</span>
-      </div>
-      <app-triage />
-    </section>
     <section class="panel panel-vault no-print" [class.collapsed]="layout.vaultCollapsed()" aria-label="Master career vault">
       <div class="vault-rail">
         <button
@@ -69,6 +52,23 @@
         <span class="vault-rail__label">Master Career Vault</span>
       </div>
       <app-vault-editor />
+    </section>
+    <section class="panel panel-triage no-print" [class.collapsed]="layout.triageCollapsed()" aria-label="Job description and AI triage">
+      <div class="vault-rail triage-rail">
+        <button
+          app-button
+          type="button"
+          variant="secondary"
+          size="sm"
+          [iconOnly]="true"
+          [iconLeading]="expandIcon"
+          aria-label="Expand job description and AI triage"
+          [attr.aria-expanded]="false"
+          (click)="layout.setTriageCollapsed(false)"
+        ></button>
+        <span class="vault-rail__label">Job Match &amp; Triage</span>
+      </div>
+      <app-triage />
     </section>
     <section class="panel panel-preview" aria-label="A4 preview">
       <app-preview />

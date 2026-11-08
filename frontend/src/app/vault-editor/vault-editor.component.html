@@ -2,13 +2,15 @@
 <div class="panel-body">
   <div class="card-head card-head--vault">
     <div class="card-head__left">
-      <button app-button type="button" variant="ghost" size="sm" class="back-to-triage-btn" (click)="layout.setActiveTab('triage')">&larr; Back to Job Match</button>
+      <button app-button type="button" variant="ghost" size="sm" class="back-to-triage-btn" (click)="layout.setActiveTab('triage')" title="Go to step 2: Match keywords and tailor for a job">Job match &rarr;</button>
       <h2 class="panel-title">Master Career Vault</h2>
     </div>
     <div class="vault-head__actions">
       <button app-button type="button" variant="secondary" size="sm" (click)="dialog.set('backup')">Backup &amp; import</button>
       <button app-button type="button" variant="secondary" size="sm" [iconOnly]="true" [iconLeading]="collapseIcon"
-        class="collapse-btn" aria-label="Collapse master career vault" [attr.aria-expanded]="true" (click)="layout.setVaultCollapsed(true)"></button>
+        class="collapse-btn" [attr.aria-label]="ext.isSidePanel() ? 'Hide side panel' : 'Collapse master career vault'"
+        [attr.title]="ext.isSidePanel() ? 'Hide side panel' : 'Collapse master career vault'"
+        [attr.aria-expanded]="true" (click)="collapseVault()"></button>
     </div>
   </div>
   @if (message(); as m) {

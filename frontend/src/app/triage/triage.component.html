@@ -1,9 +1,11 @@
 <div class="panel-body panel-body--triage" [class.panel-body--triage-collapsed]="!triageOpen()">
   <!-- Profile Bar: Shows candidate & quick edit button -->
-  <div class="profile-strip no-print">
+  <div class="profile-strip no-print" [class.profile-strip--minimized]="profileStripCollapsed()">
     <div class="profile-strip__details">
       <span class="profile-strip__name">{{ vs.vault().contact.fullName || 'Candidate Profile' }}</span>
-      <span class="profile-strip__meta">{{ vs.vault().experience.length }} roles &middot; {{ bulletCount }} experience points</span>
+      @if (!profileStripCollapsed()) {
+        <span class="profile-strip__meta">{{ vs.vault().experience.length }} roles &middot; {{ bulletCount }} experience points</span>
+      }
     </div>
     <div class="profile-strip__actions">
       <button app-button type="button" variant="ghost" size="sm" (click)="editProfile()" title="Edit your experience, contact info, and vault details">
@@ -15,11 +17,12 @@
         variant="secondary"
         size="sm"
         [iconOnly]="true"
-        [iconLeading]="collapseIcon"
+        [iconLeading]="profileStripCollapsed() ? expandIcon : collapseIcon"
         class="collapse-btn"
-        aria-label="Collapse panel"
-        [attr.aria-expanded]="true"
-        (click)="layout.setTriageCollapsed(true)"
+        [attr.aria-label]="ext.isSidePanel() ? 'Hide side panel' : profileStripCollapsed() ? 'Expand vault details' : 'Collapse panel'"
+        [attr.title]="ext.isSidePanel() ? 'Hide side panel' : profileStripCollapsed() ? 'Expand vault details' : 'Collapse panel'"
+        [attr.aria-expanded]="!profileStripCollapsed()"
+        (click)="collapsePanel()"
       ></button>
     </div>
   </div>
