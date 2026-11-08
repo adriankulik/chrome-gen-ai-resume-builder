@@ -229,9 +229,19 @@ fieldset.role {
   flex-shrink: 0;
   white-space: nowrap;
 }
-@media (min-width: 1101px) {
-  .back-to-triage-btn {
-    display: none;
+.vault-bottom-bar {
+  display: flex;
+  gap: v.$sp-2;
+  padding: v.$sp-3 0;
+  position: sticky;
+  bottom: 0;
+  background: var(--c-bg);
+  border-top: 1px solid var(--c-rule);
+  z-index: 10;
+  margin-top: v.$sp-3;
+
+  > button {
+    flex: 1;
   }
 }
 .summary-text { font-size: v.$fs-sm; color: var(--c-ink-secondary); line-height: v.$lh-snug;
@@ -328,10 +338,6 @@ fieldset.role {
       white-space: nowrap;
     }
   }
-}
-
-@media (max-width: 1100px) {
-  .collapse-btn { display: none; }
 }
 
 // ---- Preview toolbar: structured settings list ----

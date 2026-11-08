@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { VaultEditorComponent } from './vault-editor.component';
 import { VaultService } from '../core/vault.service';
+import { LayoutService } from '../core/layout.service';
 
 describe('VaultEditorComponent', () => {
   beforeEach(() => {
@@ -25,7 +26,7 @@ describe('VaultEditorComponent', () => {
     expect(comp.dialog()).toBeNull();
   });
 
-  it('renders backup and collapse actions in vault-head__actions container', async () => {
+  it('renders continue and backup actions in vault-head__actions container without collapse chevrons', async () => {
     await TestBed.configureTestingModule({ imports: [VaultEditorComponent] }).compileComponents();
     const fixture = TestBed.createComponent(VaultEditorComponent);
     fixture.detectChanges();
@@ -34,6 +35,20 @@ describe('VaultEditorComponent', () => {
     expect(actions).toBeTruthy();
     const buttons = actions?.querySelectorAll('button');
     expect(buttons?.length).toBe(2);
-    expect(actions?.querySelector('.collapse-btn')).toBeTruthy();
+    expect(actions?.querySelector('.collapse-btn')).toBeFalsy();
+    expect(el.textContent).toContain('Continue to Job Match');
+  });
+
+  it('switches layout to triage tab and uncollapses triage on continueToJobMatch', async () => {
+    await TestBed.configureTestingModule({ imports: [VaultEditorComponent] }).compileComponents();
+    const fixture = TestBed.createComponent(VaultEditorComponent);
+    const comp = fixture.componentInstance;
+    const layout = TestBed.inject(LayoutService);
+    const tabSpy = spyOn(layout, 'setActiveTab');
+    const collapseSpy = spyOn(layout, 'setTriageCollapsed');
+
+    comp.continueToJobMatch();
+    expect(tabSpy).toHaveBeenCalledWith('triage');
+    expect(collapseSpy).toHaveBeenCalledWith(false);
   });
 });
