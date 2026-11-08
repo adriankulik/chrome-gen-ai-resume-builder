@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "ATS Resume Builder with On-Device AI",
-  "short_name": "ATS Resume AI",
+  "name": "LocalResume - On-Device GenAI Resume Builder",
+  "short_name": "LocalResume",
   "version": "1.0.0",
-  "description": "Local-first ATS Resume Builder powered by Chrome Built-in AI (Gemini Nano). Tailor and export resumes directly beside any job posting.",
+  "description": "Provider-agnostic, on-device GenAI resume tailor focused on Chrome's built-in Gemini Nano with support for local runners (Ollama, LM Studio).",
   "permissions": [
     "storage",
     "sidePanel",
@@ -15,7 +15,7 @@
     "http://127.0.0.1/*"
   ],
   "action": {
-    "default_title": "Open ATS Resume Builder",
+    "default_title": "Open LocalResume",
     "default_icon": {
       "16": "assets/icons/icon-16.png",
       "48": "assets/icons/icon-48.png",
