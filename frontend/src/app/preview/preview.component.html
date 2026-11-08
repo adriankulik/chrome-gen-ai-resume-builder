@@ -3,7 +3,7 @@
   <div class="toolbar no-print">
     <div class="toolbar__head">
       <h2 class="panel-title">Live A4 Preview</h2>
-      <button app-button type="button" variant="primary" size="md" (click)="print()">Export PDF</button>
+      <button app-button type="button" variant="primary" size="md" [iconLeading]="exportIcon" (click)="print()">Export PDF</button>
     </div>
 
     @if (overflow()) {

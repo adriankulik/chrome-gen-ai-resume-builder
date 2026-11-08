@@ -1,6 +1,12 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { LucideChevronsLeft } from '@lucide/angular';
+import {
+  LucideChevronsLeft,
+  LucideEye,
+  LucideFileDown,
+  LucideRotateCcw,
+  LucideZap,
+} from '@lucide/angular';
 import { ButtonComponent } from '../button/button.component';
 import { CollapsibleComponent } from '../collapsible/collapsible.component';
 import { AiService } from '../core/ai.service';
@@ -33,6 +39,10 @@ export class TriageComponent {
   readonly ext = inject(ExtensionService);
   readonly layout = inject(LayoutService);
   readonly collapseIcon = LucideChevronsLeft.icon;
+  readonly exportIcon = LucideFileDown.icon;
+  readonly previewIcon = LucideEye.icon;
+  readonly zapIcon = LucideZap.icon;
+  readonly resetIcon = LucideRotateCcw.icon;
 
   readonly triageOpen = signal(true);
   readonly jd = signal('');
