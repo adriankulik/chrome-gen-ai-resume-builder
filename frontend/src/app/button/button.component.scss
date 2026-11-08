@@ -51,6 +51,16 @@
     display: inline-block;
   }
 
+  .app-button__icon--spin {
+    animation: app-button-spin 1s linear infinite;
+  }
+
+  &.app-button--loading {
+    cursor: wait;
+    opacity: 0.88;
+    pointer-events: none;
+  }
+
   // ---- sizes ----
   &.app-button--sm {
     height: 28px;
@@ -178,6 +188,15 @@
   }
 }
 
+@keyframes app-button-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 @include m.mq-down(v.$bp-md) {
   :host.app-button--icon-only-below-md {
     &.app-button--sm {
@@ -191,3 +210,4 @@
     }
   }
 }
+

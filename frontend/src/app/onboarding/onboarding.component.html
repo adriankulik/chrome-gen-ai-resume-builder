@@ -31,10 +31,12 @@
           variant="primary"
           size="lg"
           [fullWidth]="true"
-          [disabled]="parsing() || !rawText().trim()"
+          [disabled]="!rawText().trim()"
+          [loading]="parsing()"
+          [loadingMessages]="parsingMessages"
           (click)="parse()"
         >
-          {{ parsing() ? 'Extracting experience with AI…' : 'Extract & Review Experience' }}
+          Extract &amp; Review Experience
         </button>
 
         <div class="sub-actions">

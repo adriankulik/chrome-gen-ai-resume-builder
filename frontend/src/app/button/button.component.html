@@ -1,4 +1,11 @@
-@if (iconLeading) {
+@if (loading) {
+  <svg
+    lucideIcon
+    [lucideIcon]="spinnerIcon"
+    [size]="iconPx"
+    class="app-button__icon app-button__icon--lead app-button__icon--spin"
+  ></svg>
+} @else if (iconLeading) {
   <svg
     lucideIcon
     [lucideIcon]="iconLeading"
@@ -7,9 +14,15 @@
   ></svg>
 }
 @if (!iconOnly) {
-  <span class="app-button__label"><ng-content></ng-content></span>
+  <span class="app-button__label">
+    @if (loading) {
+      {{ currentLoadingMessage() }}
+    } @else {
+      <ng-content></ng-content>
+    }
+  </span>
 }
-@if (iconTrailing) {
+@if (iconTrailing && !loading) {
   <svg
     lucideIcon
     [lucideIcon]="iconTrailing"

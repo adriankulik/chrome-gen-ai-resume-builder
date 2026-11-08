@@ -24,4 +24,16 @@ describe('VaultEditorComponent', () => {
     expect(vs.onboarded()).toBeFalse();
     expect(comp.dialog()).toBeNull();
   });
+
+  it('renders backup and collapse actions in vault-head__actions container', async () => {
+    await TestBed.configureTestingModule({ imports: [VaultEditorComponent] }).compileComponents();
+    const fixture = TestBed.createComponent(VaultEditorComponent);
+    fixture.detectChanges();
+    const el = fixture.nativeElement as HTMLElement;
+    const actions = el.querySelector('.vault-head__actions');
+    expect(actions).toBeTruthy();
+    const buttons = actions?.querySelectorAll('button');
+    expect(buttons?.length).toBe(2);
+    expect(actions?.querySelector('.collapse-btn')).toBeTruthy();
+  });
 });

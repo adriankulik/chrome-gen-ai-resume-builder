@@ -52,6 +52,8 @@
     align-items: center;
     gap: v.$sp-2;
     flex: 0 0 auto;
+    flex-wrap: nowrap;
+    white-space: nowrap;
   }
 }
 

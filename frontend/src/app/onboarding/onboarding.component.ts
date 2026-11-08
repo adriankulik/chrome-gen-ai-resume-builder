@@ -26,6 +26,15 @@ export class OnboardingComponent {
   readonly parsing = signal(false);
   readonly error = signal('');
 
+  readonly parsingMessages = [
+    'Parsing resume structure…',
+    'Extracting contact & links…',
+    'Organizing work history & roles…',
+    'Isolating impact-driven bullets…',
+    'Extracting core technical skills…',
+    'Finalizing Career Vault…',
+  ];
+
   // Local draft vault during review
   readonly draft = signal<MasterVault>(structuredClone(this.vs.vault()));
 

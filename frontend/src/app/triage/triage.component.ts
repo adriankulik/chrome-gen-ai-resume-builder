@@ -55,6 +55,32 @@ export class TriageComponent {
   readonly showManualInput = signal(false);
   readonly manualMode = signal(false);
 
+  readonly tailoringMessages = [
+    'Reading job description…',
+    'Matching ATS keywords on-device…',
+    'Scoring your achievements…',
+    'Selecting strongest bullets…',
+    'Tailoring executive summary…',
+    'Aligning core skills with job criteria…',
+    'Polishing final recommendations…',
+    'Almost ready — 100% private…',
+  ];
+
+  readonly extractingMessages = [
+    'Extracting page from tab…',
+    'Distilling job description with AI…',
+    'Stripping web menus & boilerplate…',
+    'Isolating key responsibilities…',
+    'Almost ready for review…',
+  ];
+
+  readonly proposingMessages = [
+    'Analyzing missing keywords…',
+    'Drafting metric-driven achievement…',
+    'Refining impact and phrasing…',
+    'Almost done…',
+  ];
+
   get bulletCount(): number {
     return this.vs.vault().experience.reduce((sum, e) => sum + e.bullets.length, 0);
   }

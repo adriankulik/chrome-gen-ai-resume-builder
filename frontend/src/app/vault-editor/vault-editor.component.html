@@ -1,11 +1,11 @@
 @let v = vs.vault();
 <div class="panel-body">
-  <div class="card-head">
+  <div class="card-head card-head--vault">
     <div class="card-head__left">
-      <button app-button type="button" variant="ghost" size="sm" (click)="layout.setActiveTab('triage')">&larr; Back to Job Match</button>
+      <button app-button type="button" variant="ghost" size="sm" class="back-to-triage-btn" (click)="layout.setActiveTab('triage')">&larr; Back to Job Match</button>
       <h2 class="panel-title">Master Career Vault</h2>
     </div>
-    <div class="row wrap">
+    <div class="vault-head__actions">
       <button app-button type="button" variant="secondary" size="sm" (click)="dialog.set('backup')">Backup &amp; import</button>
       <button app-button type="button" variant="secondary" size="sm" [iconOnly]="true" [iconLeading]="collapseIcon"
         class="collapse-btn" aria-label="Collapse master career vault" [attr.aria-expanded]="true" (click)="layout.setVaultCollapsed(true)"></button>
@@ -18,8 +18,17 @@
   <app-collapsible title="Parse raw resume text" [(open)]="parseOpen">
     <p class="hint">Paste your existing CV text to automatically extract and populate your career vault.</p>
     <textarea rows="6" aria-label="Raw resume text" placeholder="Paste your existing CV text here…" [ngModel]="rawText()" (ngModelChange)="setRawText($event)"></textarea>
-    <button app-button type="button" variant="primary" size="md" [disabled]="parsing() || !rawText().trim() || !ai.isAvailable" (click)="parseRaw()">
-      {{ parsing() ? 'Parsing…' : 'Parse raw resume text' }}
+    <button
+      app-button
+      type="button"
+      variant="primary"
+      size="md"
+      [disabled]="!rawText().trim() || !ai.isAvailable"
+      [loading]="parsing()"
+      [loadingMessages]="parsingMessages"
+      (click)="parseRaw()"
+    >
+      Parse raw resume text
     </button>
     @if (!ai.isAvailable) {
       <p class="hint">Needs an AI engine (Chrome built-in AI or local Ollama/LM Studio) — configure via the AI badge in the header or edit sections manually.</p>

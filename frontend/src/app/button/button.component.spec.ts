@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { LucideSun } from '@lucide/angular';
 import { ButtonComponent, ButtonVariant, ButtonSize } from './button.component';
@@ -12,6 +12,10 @@ import { ButtonComponent, ButtonVariant, ButtonSize } from './button.component';
       [size]="size"
       [iconOnly]="iconOnly"
       [iconLeading]="icon"
+      [loading]="loading"
+      [loadingText]="loadingText"
+      [loadingMessages]="loadingMessages"
+      [loadingIntervalMs]="loadingIntervalMs"
     >Label</button>
   `,
   standalone: true,
@@ -22,6 +26,10 @@ class TestHostComponent {
   size: ButtonSize = 'md';
   iconOnly = false;
   icon = LucideSun.icon;
+  loading = false;
+  loadingText?: string;
+  loadingMessages: string[] = [];
+  loadingIntervalMs = 5000;
 }
 
 describe('ButtonComponent', () => {
@@ -110,4 +118,47 @@ describe('ButtonComponent', () => {
     const icon = getButton().querySelector('.app-button__icon--lead');
     expect(icon).toBeTruthy();
   });
+
+  it('renders spinner and disables button when loading is true', () => {
+    hostFixture.componentInstance.loading = true;
+    hostFixture.detectChanges();
+    const btn = getButton();
+    expect(btn.classList).toContain('app-button--loading');
+    expect(btn.getAttribute('aria-busy')).toBe('true');
+    expect(btn.disabled).toBeTrue();
+    const spinner = btn.querySelector('.app-button__icon--spin');
+    expect(spinner).toBeTruthy();
+  });
+
+  it('displays static loadingText when provided', () => {
+    hostFixture.componentInstance.loading = true;
+    hostFixture.componentInstance.loadingText = 'Saving…';
+    hostFixture.detectChanges();
+    expect(getButton().textContent).toContain('Saving…');
+  });
+
+  it('rotates through loadingMessages on the specified interval', fakeAsync(() => {
+    hostFixture.componentInstance.loading = true;
+    hostFixture.componentInstance.loadingMessages = ['Step 1…', 'Step 2…', 'Step 3…'];
+    hostFixture.componentInstance.loadingIntervalMs = 1000;
+    hostFixture.detectChanges();
+
+    expect(getButton().textContent).toContain('Step 1…');
+
+    tick(1000);
+    hostFixture.detectChanges();
+    expect(getButton().textContent).toContain('Step 2…');
+
+    tick(1000);
+    hostFixture.detectChanges();
+    expect(getButton().textContent).toContain('Step 3…');
+
+    tick(1000);
+    hostFixture.detectChanges();
+    expect(getButton().textContent).toContain('Step 1…');
+
+    // clean up timer on unload
+    hostFixture.componentInstance.loading = false;
+    hostFixture.detectChanges();
+  }));
 });
