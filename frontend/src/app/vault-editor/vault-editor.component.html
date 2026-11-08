@@ -22,7 +22,7 @@
       {{ parsing() ? 'Parsing…' : 'Parse raw resume text' }}
     </button>
     @if (!ai.isAvailable) {
-      <p class="hint">Needs Chrome built-in AI, which isn't available right now — edit the sections below manually instead.</p>
+      <p class="hint">Needs an AI engine (Chrome built-in AI or local Ollama/LM Studio) — configure via the AI badge in the header or edit sections manually.</p>
     }
   </app-collapsible>
 

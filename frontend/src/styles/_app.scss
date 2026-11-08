@@ -37,7 +37,18 @@ app-root { display: flex; flex-direction: column; height: 100vh; }
   line-height: 1;
   white-space: nowrap;
   user-select: none;
-  transition: background v.$dur-base v.$ease-out, border-color v.$dur-base v.$ease-out;
+  cursor: pointer;
+  appearance: none;
+  transition: background v.$dur-base v.$ease-out, border-color v.$dur-base v.$ease-out, filter v.$dur-base v.$ease-out;
+
+  &:hover {
+    filter: brightness(0.94);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--c-focus);
+    outline-offset: 2px;
+  }
 
   &__dot {
     width: 6px;
