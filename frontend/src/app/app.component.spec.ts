@@ -44,4 +44,29 @@ describe('AppComponent', () => {
       '3. Preview',
     ]);
   });
+
+  it('renders About button in navbar and toggles About modal', async () => {
+    await TestBed.configureTestingModule({ imports: [AppComponent] }).compileComponents();
+    const fixture = TestBed.createComponent(AppComponent);
+    const comp = fixture.componentInstance;
+    fixture.detectChanges();
+    const el = fixture.nativeElement as HTMLElement;
+
+    const aboutBtn = Array.from(el.querySelectorAll('.header-controls button')).find(
+      (b) => b.textContent?.trim().includes('About'),
+    ) as HTMLButtonElement;
+    expect(aboutBtn).toBeTruthy();
+    expect(comp.aboutOpen()).toBeFalse();
+    expect(el.querySelector('app-about')).toBeFalsy();
+
+    aboutBtn.click();
+    fixture.detectChanges();
+
+    expect(comp.aboutOpen()).toBeTrue();
+    expect(el.querySelector('app-about')).toBeTruthy();
+
+    comp.aboutOpen.set(false);
+    fixture.detectChanges();
+    expect(el.querySelector('app-about')).toBeFalsy();
+  });
 });

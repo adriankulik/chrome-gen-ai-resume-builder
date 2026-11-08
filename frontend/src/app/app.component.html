@@ -4,6 +4,17 @@
   <div class="header-actions">
     <app-ai-lozenge (openSettings)="aiSettingsOpen.set(true)" />
     <div class="header-controls">
+      <button
+        app-button
+        type="button"
+        variant="secondary"
+        size="sm"
+        [iconLeading]="infoIcon"
+        (click)="aboutOpen.set(true)"
+        title="About Local AI Resume"
+      >
+        About
+      </button>
       @if (ext.isExtension()) {
         <button app-button type="button" variant="secondary" size="sm" (click)="ext.openInNewTab()" title="Open Local AI Resume in a full browser tab">
           Full tab
@@ -83,5 +94,11 @@
       <button app-button type="button" variant="ghost" (click)="aiSettingsOpen.set(false)">Cancel</button>
       <button app-button type="button" variant="primary" (click)="aiSettings.saveAndClose(closeAiSettings)">Save settings</button>
     </div>
+  </app-modal>
+}
+
+@if (aboutOpen()) {
+  <app-modal title="About Local AI Resume" (closed)="aboutOpen.set(false)">
+    <app-about (closed)="aboutOpen.set(false)" />
   </app-modal>
 }

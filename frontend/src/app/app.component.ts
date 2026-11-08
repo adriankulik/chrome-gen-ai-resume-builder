@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { LucideChevronsRight } from '@lucide/angular';
+import { LucideChevronsRight, LucideInfo } from '@lucide/angular';
 import { ButtonComponent } from './button/button.component';
 import { LayoutService, WorkspaceTab } from './core/layout.service';
 import { AiService } from './core/ai.service';
@@ -13,6 +13,7 @@ import { OnboardingComponent } from './onboarding/onboarding.component';
 import { ModalComponent } from './modal/modal.component';
 import { AiSettingsComponent } from './ai-settings/ai-settings.component';
 import { AiLozengeComponent } from './ai-lozenge/ai-lozenge.component';
+import { AboutComponent } from './about/about.component';
 
 @Component({
   selector: 'app-root',
@@ -27,6 +28,7 @@ import { AiLozengeComponent } from './ai-lozenge/ai-lozenge.component';
     ModalComponent,
     AiSettingsComponent,
     AiLozengeComponent,
+    AboutComponent,
   ],
   templateUrl: './app.component.html',
 })
@@ -36,8 +38,10 @@ export class AppComponent implements OnInit {
   readonly ext = inject(ExtensionService);
   readonly layout = inject(LayoutService);
   readonly expandIcon = LucideChevronsRight.icon;
+  readonly infoIcon = LucideInfo.icon;
   readonly tab = this.layout.activeTab;
   readonly aiSettingsOpen = signal(false);
+  readonly aboutOpen = signal(false);
 
   readonly closeAiSettings = (): void => {
     this.aiSettingsOpen.set(false);
