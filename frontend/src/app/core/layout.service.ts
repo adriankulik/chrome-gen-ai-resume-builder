@@ -13,7 +13,7 @@ export class LayoutService {
 
   readonly vaultCollapsed = signal(false);
   readonly triageCollapsed = signal(false);
-  readonly activeTab = signal<WorkspaceTab>('triage');
+  readonly activeTab = signal<WorkspaceTab>('vault');
 
   setActiveTab(tab: WorkspaceTab): void {
     this.activeTab.set(tab);

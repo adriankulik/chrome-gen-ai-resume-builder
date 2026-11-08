@@ -296,16 +296,16 @@ fieldset.role {
 
 @media (min-width: 1101px) {
   .workspace {
-    &.triage-collapsed {
+    &.vault-collapsed {
       grid-template-columns: 52px minmax(300px, 1fr) minmax(420px, 1.2fr);
     }
 
-    &.vault-collapsed {
+    &.triage-collapsed {
       grid-template-columns: minmax(300px, 1fr) 52px minmax(420px, 1.2fr);
     }
 
-    &.triage-collapsed.vault-collapsed,
-    &.vault-collapsed.triage-collapsed {
+    &.vault-collapsed.triage-collapsed,
+    &.triage-collapsed.vault-collapsed {
       grid-template-columns: 52px 52px 1fr;
     }
   }

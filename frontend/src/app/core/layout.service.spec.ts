@@ -31,9 +31,9 @@ describe('LayoutService', () => {
 
   it('switches active tabs', () => {
     const l = TestBed.inject(LayoutService);
-    expect(l.activeTab()).toBe('triage');
-    l.setActiveTab('vault');
     expect(l.activeTab()).toBe('vault');
+    l.setActiveTab('triage');
+    expect(l.activeTab()).toBe('triage');
     l.setActiveTab('preview');
     expect(l.activeTab()).toBe('preview');
   });
