@@ -62,7 +62,7 @@ describe('AiService', () => {
 
     await service.refreshAvailability();
     expect(service.availability()).toBe('available');
-    expect(service.activeProviderLabel()).toBe('Nano ready');
+    expect(service.activeProviderLabel()).toBe('Gemini Nano');
     expect(service.isAvailable).toBeTrue();
   });
 

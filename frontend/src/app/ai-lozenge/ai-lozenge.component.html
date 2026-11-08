@@ -1,0 +1,12 @@
+<button
+  type="button"
+  class="ai-lozenge"
+  [class.ai-lozenge--ok]="status() === 'ok'"
+  [class.ai-lozenge--warn]="status() === 'warn'"
+  [class.ai-lozenge--muted]="status() === 'muted'"
+  [title]="tooltip()"
+  (click)="handleClick()"
+>
+  <span class="ai-lozenge__dot" aria-hidden="true"></span>
+  <span class="ai-lozenge__text">{{ label() }}</span>
+</button>

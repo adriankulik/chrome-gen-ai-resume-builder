@@ -28,8 +28,11 @@ app-root { display: flex; flex-direction: column; height: 100vh; }
 .ai-lozenge {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: v.$sp-2;
-  padding: 4px v.$sp-3;
+  height: 28px;
+  padding: 0 v.$sp-3;
+  box-sizing: border-box;
   border-radius: v.$radius-pill;
   font-family: v.$font-mono;
   font-size: v.$fs-xs;
