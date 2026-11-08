@@ -30,4 +30,19 @@ describe('VaultService persistence', () => {
     expect(vs.vault().summary).toBe('Saved');
     expect(vs.pristine()).toBeFalse();
   });
+
+  it('clears all data and resets to pristine onboarding state', async () => {
+    localStorage.setItem(KEY, JSON.stringify({ summary: 'Custom' }));
+    localStorage.setItem('ats-resume-builder:ats-onboarding-completed', 'true');
+    const vs = TestBed.inject(VaultService);
+    await tick();
+    vs.completeOnboarding();
+    expect(vs.onboarded()).toBeTrue();
+
+    await vs.clearAllData();
+    expect(vs.onboarded()).toBeFalse();
+    expect(vs.pristine()).toBeTrue();
+    expect(localStorage.getItem(KEY)).toBeNull();
+    expect(localStorage.getItem('ats-resume-builder:ats-onboarding-completed')).toBeNull();
+  });
 });

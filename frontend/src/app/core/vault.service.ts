@@ -175,4 +175,14 @@ export class VaultService {
   async clearStorage(): Promise<void> {
     await this.storage.delete(VAULT_KEY);
   }
+
+  async clearAllData(): Promise<void> {
+    await this.storage.clearAll();
+    this.pristine.set(true);
+    this.vault.set(defaultVault());
+    this.onboarded.set(false);
+    this.selectedBulletIds.set(new Set());
+    this.tailoredSummary.set(null);
+    this.tailoredSkills.set(null);
+  }
 }

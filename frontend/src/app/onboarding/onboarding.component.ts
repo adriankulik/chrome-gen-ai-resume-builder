@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideSparkles, LucideCheck, LucideArrowLeft, LucidePlus, LucideTrash2 } from '@lucide/angular';
+import { ButtonComponent } from '../button/button.component';
 import { VaultService } from '../core/vault.service';
 import { AiService } from '../core/ai.service';
 import { defaultVault } from '../core/default-vault';
@@ -12,7 +13,7 @@ type OnboardingStep = 'paste' | 'review';
 @Component({
   selector: 'app-onboarding',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ButtonComponent],
   templateUrl: './onboarding.component.html',
   styleUrl: './onboarding.component.scss',
 })
@@ -57,6 +58,13 @@ export class OnboardingComponent {
   loadSample(): void {
     this.draft.set(defaultVault());
     this.step.set('review');
+  }
+
+  async clearAll(): Promise<void> {
+    await this.vs.clearAllData();
+    this.rawText.set('');
+    this.draft.set(defaultVault());
+    this.step.set('paste');
   }
 
   backToPaste(): void {

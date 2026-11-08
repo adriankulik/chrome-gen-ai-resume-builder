@@ -6,7 +6,7 @@
       <span class="profile-strip__meta">{{ vs.vault().experience.length }} roles &middot; {{ bulletCount }} experience points</span>
     </div>
     <div class="profile-strip__actions">
-      <button type="button" class="btn small ghost" (click)="editProfile()" title="Edit your experience, contact info, and vault details">
+      <button app-button type="button" variant="ghost" size="sm" (click)="editProfile()" title="Edit your experience, contact info, and vault details">
         Edit details
       </button>
       <button
@@ -42,8 +42,12 @@
       <div class="companion-actions">
         @if (ext.isExtension()) {
           <button
+            app-button
             type="button"
-            class="btn primary hero-btn"
+            variant="primary"
+            size="lg"
+            [fullWidth]="true"
+            class="hero-btn"
             [disabled]="extracting() || analyzing()"
             (click)="extractFromActiveTab()"
           >
@@ -52,8 +56,11 @@
         }
 
         <button
+          app-button
           type="button"
-          class="btn ghost small toggle-manual-btn"
+          variant="ghost"
+          size="sm"
+          class="toggle-manual-btn"
           (click)="toggleManualInput()"
         >
           {{ showManualInput() || !ext.isExtension() ? 'Hide manual paste' : 'Or paste job description manually' }}
@@ -72,8 +79,10 @@
             (paste)="onPaste()"
           ></textarea>
           <button
+            app-button
             type="button"
-            class="btn primary"
+            variant="primary"
+            size="md"
             [disabled]="analyzing() || !jd().trim()"
             (click)="analyze()"
           >
@@ -84,7 +93,7 @@
 
       @if (ai.availability() === 'downloadable' || ai.availability() === 'downloading') {
         <div class="ai-download-notice">
-          <button type="button" class="btn small" [disabled]="ai.downloadProgress() !== null" (click)="ai.startDownload()">
+          <button app-button type="button" variant="secondary" size="sm" [disabled]="ai.downloadProgress() !== null" (click)="ai.startDownload()">
             {{ ai.downloadProgress() !== null ? 'Downloading AI model…' : 'Download on-device AI model' }}
           </button>
           <p class="hint">Keyword matching works immediately while Chrome built-in AI downloads.</p>
@@ -114,7 +123,7 @@
           <span class="hint block">{{ matchedCount() }} of {{ matches().length }} keywords covered</span>
         </div>
         <div class="row wrap align-center">
-          <button type="button" class="btn small" (click)="resetJob()" title="Clear and match another job posting">
+          <button app-button type="button" variant="secondary" size="sm" (click)="resetJob()" title="Clear and match another job posting">
             &#8634; Match another job
           </button>
         </div>
@@ -125,10 +134,10 @@
       </div>
 
       <div class="quick-export-strip">
-        <button type="button" class="btn primary" (click)="exportPdf()">
+        <button app-button type="button" variant="primary" size="md" (click)="exportPdf()">
           &#128196; Export PDF
         </button>
-        <button type="button" class="btn ghost" (click)="viewPreview()">
+        <button app-button type="button" variant="ghost" size="md" (click)="viewPreview()">
           &#128065; Preview Resume
         </button>
       </div>
@@ -186,8 +195,8 @@
         <p class="msg error">1-page mode is on: more than {{ cap() }} bullets will likely overflow the page.</p>
       }
       <div class="row wrap">
-        <button type="button" class="btn small" (click)="vs.selectAll()">Select all</button>
-        <button type="button" class="btn small" (click)="vs.setSelected([])">Clear</button>
+        <button app-button type="button" variant="secondary" size="sm" (click)="vs.selectAll()">Select all</button>
+        <button app-button type="button" variant="secondary" size="sm" (click)="vs.setSelected([])">Clear</button>
       </div>
 
       @for (e of vs.vault().experience; track e.id) {
@@ -208,13 +217,13 @@
             <div class="proposal">
               <textarea rows="3" [ngModel]="p" (ngModelChange)="setProposal(e.id, $index, $event)" [attr.aria-label]="'Suggested bullet ' + ($index + 1)"></textarea>
               <div class="row">
-                <button type="button" class="btn small primary" (click)="acceptProposal(e.id, $index)">Accept &amp; Edit</button>
-                <button type="button" class="btn small" (click)="dismissProposal(e.id, $index)">Dismiss</button>
+                <button app-button type="button" variant="primary" size="sm" (click)="acceptProposal(e.id, $index)">Accept &amp; Edit</button>
+                <button app-button type="button" variant="ghost" size="sm" (click)="dismissProposal(e.id, $index)">Dismiss</button>
               </div>
             </div>
           }
 
-          <button type="button" class="btn small" [disabled]="!jd().trim() || !ai.isAvailable || proposingFor() !== null" (click)="propose(e.id)">
+          <button app-button type="button" variant="secondary" size="sm" [disabled]="!jd().trim() || !ai.isAvailable || proposingFor() !== null" (click)="propose(e.id)">
             {{ proposingFor() === e.id ? 'Thinking…' : 'Suggest bullet for this job' }}
           </button>
         </div>
@@ -226,10 +235,10 @@
 
     <!-- Bottom Sticky Actions -->
     <div class="triage-bottom-bar">
-      <button type="button" class="btn primary full-width" (click)="exportPdf()">
+      <button app-button type="button" variant="primary" size="md" [fullWidth]="true" (click)="exportPdf()">
         &#128196; Export PDF
       </button>
-      <button type="button" class="btn ghost full-width" (click)="viewPreview()">
+      <button app-button type="button" variant="ghost" size="md" [fullWidth]="true" (click)="viewPreview()">
         &#128065; Preview Resume
       </button>
     </div>

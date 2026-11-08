@@ -3,7 +3,7 @@
     <div class="onboarding-card">
       <div class="onboarding-header">
         <span class="badge">Welcome</span>
-        <h1 class="onboarding-title">Set up your Career Vault</h1>
+        <h2 class="onboarding-title">Set up your Career Vault</h2>
         <p class="onboarding-desc">
           Paste your existing resume, LinkedIn summary, or work history. We'll automatically organize your experience points, summary, and skills on-device.
         </p>
@@ -26,8 +26,11 @@
 
       <div class="onboarding-actions">
         <button
+          app-button
           type="button"
-          class="btn primary full-width"
+          variant="primary"
+          size="lg"
+          [fullWidth]="true"
           [disabled]="parsing() || !rawText().trim()"
           (click)="parse()"
         >
@@ -35,25 +38,27 @@
         </button>
 
         <div class="sub-actions">
-          <button type="button" class="btn ghost small" (click)="loadSample()">
+          <button app-button type="button" variant="ghost" size="sm" (click)="loadSample()">
             Or load sample profile
           </button>
         </div>
       </div>
 
       <div class="privacy-notice">
-        <span class="privacy-icon" aria-hidden="true">🔒</span>
-        <span>100% on-device &amp; private. Your career data never leaves this browser.</span>
+        <span class="privacy-notice__text">100% on-device &amp; private. Your career data never leaves this browser.</span>
+        <button app-button type="button" variant="ghost" size="sm" class="btn-clean-slate" (click)="clearAll()" title="Wipe local storage and reset completely">
+          Reset to clean slate
+        </button>
       </div>
     </div>
   } @else {
     <div class="onboarding-card review-card">
       <div class="onboarding-header">
-        <button type="button" class="btn small ghost btn-back" (click)="backToPaste()">
+        <button app-button type="button" variant="ghost" size="sm" class="btn-back" (click)="backToPaste()">
           &larr; Back to paste
         </button>
         <span class="badge">Review &amp; Confirm</span>
-        <h1 class="onboarding-title">Check your profile</h1>
+        <h2 class="onboarding-title">Check your profile</h2>
         <p class="onboarding-desc">
           Review your extracted summary, experience points, and skills below. You can edit them freely.
         </p>
@@ -61,7 +66,7 @@
 
       <!-- Contact Info -->
       <section class="review-section">
-        <h2 class="section-title">Contact Information</h2>
+        <h3 class="section-title">Contact Information</h3>
         <div class="grid-2">
           <label>
             Full name
@@ -84,7 +89,7 @@
 
       <!-- Professional Summary -->
       <section class="review-section">
-        <h2 class="section-title">Professional Summary</h2>
+        <h3 class="section-title">Professional Summary</h3>
         <textarea
           rows="3"
           placeholder="Professional summary…"
@@ -95,7 +100,7 @@
       <!-- Experience Points -->
       <section class="review-section">
         <div class="section-header">
-          <h2 class="section-title">Experience Points</h2>
+          <h3 class="section-title">Experience Points</h3>
           <span class="count">{{ draft().experience.length }} roles</span>
         </div>
 
@@ -130,19 +135,24 @@
                         [(ngModel)]="b.text"
                       ></textarea>
                       <button
+                        app-button
                         type="button"
-                        class="btn-icon"
-                        title="Remove bullet"
+                        variant="close"
+                        size="sm"
+                        [iconOnly]="true"
+                        [iconLeading]="trashIcon"
+                        aria-label="Remove bullet point"
                         (click)="removeBullet(expIdx, bIdx)"
-                      >
-                        &times;
-                      </button>
+                      ></button>
                     </li>
                   }
                 </ul>
                 <button
+                  app-button
                   type="button"
-                  class="btn small ghost btn-add-bullet"
+                  variant="ghost"
+                  size="sm"
+                  class="btn-add-bullet"
                   (click)="addBullet(expIdx)"
                 >
                   + Add point
@@ -156,7 +166,7 @@
       <!-- Skills -->
       <section class="review-section">
         <div class="section-header">
-          <h2 class="section-title">Skills</h2>
+          <h3 class="section-title">Skills</h3>
           <span class="count">{{ draft().skills.length }} skills</span>
         </div>
         <div class="chips-preview">
@@ -176,10 +186,10 @@
 
       <!-- Actions -->
       <div class="review-sticky-footer">
-        <button type="button" class="btn ghost" (click)="backToPaste()">
+        <button app-button type="button" variant="ghost" size="md" (click)="backToPaste()">
           &larr; Re-paste
         </button>
-        <button type="button" class="btn primary" (click)="saveAndProceed()">
+        <button app-button type="button" variant="primary" size="lg" (click)="saveAndProceed()">
           Save &amp; Start Tailoring &rarr;
         </button>
       </div>

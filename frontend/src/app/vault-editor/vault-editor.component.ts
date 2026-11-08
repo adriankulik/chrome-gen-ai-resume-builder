@@ -9,7 +9,7 @@ import { CollapsibleComponent } from '../collapsible/collapsible.component';
 import { LucideChevronsLeft, LucideX } from '@lucide/angular';
 import { LayoutService } from '../core/layout.service';
 
-export type EditorDialog = 'backup' | 'summary' | 'experience' | 'education' | 'skills';
+export type EditorDialog = 'backup' | 'summary' | 'experience' | 'education' | 'skills' | 'confirm-reset';
 
 const MAX_PHOTO_PX = 400;
 const RAW_KEY = 'raw-resume-text';
@@ -158,6 +158,12 @@ export class VaultEditorComponent {
 
   triggerImport(): void {
     this.importInput()?.nativeElement.click();
+  }
+
+  async executeClearAll(): Promise<void> {
+    await this.vs.clearAllData();
+    this.dialog.set(null);
+    this.rawText.set('');
   }
 
   private flash(kind: 'ok' | 'error', text: string): void {

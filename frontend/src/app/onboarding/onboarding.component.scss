@@ -23,9 +23,8 @@
   gap: v.$sp-4;
   margin: auto 0;
 
-  @media (max-width: 480px) {
+  @include m.mq-down(v.$bp-sm) {
     padding: v.$sp-3;
-    border-radius: v.$radius-md;
     gap: v.$sp-3;
   }
 }
@@ -39,7 +38,7 @@
     align-self: flex-start;
     @include m.label-mono;
     font-size: v.$fs-xs;
-    padding: 2px 8px;
+    padding: 2px v.$sp-2;
     border-radius: v.$radius-pill;
     background: var(--c-chip-bg);
     border: 1px solid var(--c-chip-border);
@@ -93,13 +92,6 @@
   flex-direction: column;
   gap: v.$sp-3;
 
-  .full-width {
-    width: 100%;
-    height: 44px;
-    font-size: v.$fs-sm;
-    font-weight: v.$fw-medium;
-  }
-
   .sub-actions {
     display: flex;
     justify-content: center;
@@ -108,14 +100,26 @@
 
 .privacy-notice {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  gap: v.$sp-2;
+  gap: v.$sp-1;
   font-size: v.$fs-xs;
   color: var(--c-ink-muted);
   text-align: center;
   padding-top: v.$sp-2;
   border-top: 1px solid var(--c-rule);
+
+  &__text {
+    line-height: v.$lh-snug;
+  }
+
+  .btn-clean-slate {
+    color: var(--c-ink-muted);
+
+    &:hover {
+      color: var(--c-accent);
+    }
+  }
 }
 
 // ---- Review Step Styles ----
@@ -132,7 +136,7 @@
   border: 1px solid var(--c-rule);
   border-radius: v.$radius-md;
 
-  @media (max-width: 480px) {
+  @include m.mq-down(v.$bp-sm) {
     padding: v.$sp-3;
   }
 }
@@ -155,7 +159,7 @@
   grid-template-columns: repeat(2, 1fr);
   gap: v.$sp-3;
 
-  @media (max-width: 520px) {
+  @include m.mq-down(v.$bp-sm) {
     grid-template-columns: 1fr;
   }
 }
@@ -181,7 +185,7 @@
   grid-template-columns: 1fr 1fr;
   gap: v.$sp-2;
 
-  @media (max-width: 480px) {
+  @include m.mq-down(v.$bp-sm) {
     grid-template-columns: 1fr;
   }
 
@@ -216,9 +220,10 @@
 
   .bullet-dot {
     color: var(--c-accent);
-    font-size: 1.2rem;
-    line-height: 1.2;
+    font-size: v.$fs-md;
+    line-height: v.$lh-tight;
     flex: 0 0 auto;
+    padding-top: 2px;
   }
 
   .bullet-text {
@@ -231,21 +236,6 @@
     background: var(--c-chip-bg);
     color: var(--c-ink-primary);
     resize: vertical;
-  }
-
-  .btn-icon {
-    background: transparent;
-    border: none;
-    color: var(--c-ink-muted);
-    font-size: 1.25rem;
-    line-height: 1;
-    cursor: pointer;
-    padding: 4px;
-    flex: 0 0 auto;
-
-    &:hover {
-      color: var(--c-accent);
-    }
   }
 }
 
@@ -266,10 +256,4 @@
   gap: v.$sp-3;
   padding-top: v.$sp-3;
   border-top: 1px solid var(--c-rule);
-
-  .btn.primary {
-    height: 42px;
-    padding: 0 v.$sp-5;
-    font-size: v.$fs-sm;
-  }
 }

@@ -72,6 +72,12 @@ describe('ButtonComponent', () => {
     expect(getButton().classList).toContain('app-button--ghost');
   });
 
+  it('applies danger variant class', () => {
+    hostFixture.componentInstance.variant = 'danger';
+    hostFixture.detectChanges();
+    expect(getButton().classList).toContain('app-button--danger');
+  });
+
   it('applies md size class by default', () => {
     expect(getButton().classList).toContain('app-button--md');
   });

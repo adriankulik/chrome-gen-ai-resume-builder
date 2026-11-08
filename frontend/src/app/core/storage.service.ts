@@ -87,4 +87,28 @@ export class StorageService {
 
     localStorage.removeItem(fullKey);
   }
+
+  async clearAll(): Promise<void> {
+    if (this.hasChromeStorage) {
+      await new Promise<void>((resolve) => {
+        chrome.storage.local.get(null, (items) => {
+          const keysToRemove = Object.keys(items || {}).filter((k) => k.startsWith(PREFIX));
+          if (keysToRemove.length) {
+            chrome.storage.local.remove(keysToRemove, () => resolve());
+          } else {
+            resolve();
+          }
+        });
+      });
+    }
+
+    const localKeys: string[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (k && (k.startsWith(PREFIX) || k === 'raw-resume-text')) {
+        localKeys.push(k);
+      }
+    }
+    localKeys.forEach((k) => localStorage.removeItem(k));
+  }
 }

@@ -107,10 +107,7 @@
   .hero-btn {
     width: 100%;
     max-width: 340px;
-    height: 48px;
-    font-size: v.$fs-sm;
-    font-weight: v.$fw-semibold;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 4px 12px var(--c-rule-strong);
   }
 
   .toggle-manual-btn {
@@ -193,10 +190,8 @@
   gap: v.$sp-2;
   margin-top: v.$sp-1;
 
-  .btn {
+  > button {
     flex: 1;
-    height: 36px;
-    font-size: v.$fs-xs;
   }
 }
 
@@ -210,8 +205,7 @@
   border-top: 1px solid var(--c-rule);
   z-index: 10;
 
-  .full-width {
+  > button {
     flex: 1;
-    height: 40px;
   }
 }

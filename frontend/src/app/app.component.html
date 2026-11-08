@@ -1,9 +1,6 @@
 <a class="skip-link" href="#workspace">Skip to workspace</a>
 <header class="app-header no-print">
-  <div class="header-branding">
-    <h1>ATS Resume Builder</h1>
-    <p class="tagline">100% local — your data never leaves this browser.</p>
-  </div>
+  <h1 class="visually-hidden">ATS Resume Builder</h1>
   <div class="header-actions">
     @switch (ai.availability()) {
       @case ('available') {
@@ -31,12 +28,14 @@
         </span>
       }
     }
-    @if (ext.isExtension()) {
-      <button type="button" class="btn small" (click)="ext.openInNewTab()" title="Open ATS Resume Builder in a full browser tab">
-        Full tab
-      </button>
-    }
-    <app-theme-toggle />
+    <div class="header-controls">
+      @if (ext.isExtension()) {
+        <button app-button type="button" variant="secondary" size="sm" (click)="ext.openInNewTab()" title="Open ATS Resume Builder in a full browser tab">
+          Full tab
+        </button>
+      }
+      <app-theme-toggle />
+    </div>
   </div>
 </header>
 

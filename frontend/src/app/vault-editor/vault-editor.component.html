@@ -2,11 +2,11 @@
 <div class="panel-body">
   <div class="card-head">
     <div class="card-head__left">
-      <button type="button" class="btn small ghost" (click)="layout.setActiveTab('triage')">&larr; Back to Job Match</button>
+      <button app-button type="button" variant="ghost" size="sm" (click)="layout.setActiveTab('triage')">&larr; Back to Job Match</button>
       <h2 class="panel-title">Master Career Vault</h2>
     </div>
     <div class="row wrap">
-      <button type="button" class="btn small" (click)="dialog.set('backup')">Backup &amp; import</button>
+      <button app-button type="button" variant="secondary" size="sm" (click)="dialog.set('backup')">Backup &amp; import</button>
       <button app-button type="button" variant="secondary" size="sm" [iconOnly]="true" [iconLeading]="collapseIcon"
         class="collapse-btn" aria-label="Collapse master career vault" [attr.aria-expanded]="true" (click)="layout.setVaultCollapsed(true)"></button>
     </div>
@@ -18,7 +18,7 @@
   <app-collapsible title="Parse raw resume text" [(open)]="parseOpen">
     <p class="hint">Paste your existing CV text to automatically extract and populate your career vault.</p>
     <textarea rows="6" aria-label="Raw resume text" placeholder="Paste your existing CV text here…" [ngModel]="rawText()" (ngModelChange)="setRawText($event)"></textarea>
-    <button type="button" class="btn primary" [disabled]="parsing() || !rawText().trim() || !ai.isAvailable" (click)="parseRaw()">
+    <button app-button type="button" variant="primary" size="md" [disabled]="parsing() || !rawText().trim() || !ai.isAvailable" (click)="parseRaw()">
       {{ parsing() ? 'Parsing…' : 'Parse raw resume text' }}
     </button>
     @if (!ai.isAvailable) {
@@ -40,7 +40,7 @@
       <div class="photo-row">
         @if (v.contact.photoDataUrl) {
           <img class="thumb" [src]="v.contact.photoDataUrl" alt="Profile photo preview" />
-          <button type="button" class="btn small" (click)="removePhoto()">Remove photo</button>
+          <button app-button type="button" variant="ghost" size="sm" (click)="removePhoto()">Remove photo</button>
         }
         <label class="btn small file-btn">
           {{ v.contact.photoDataUrl ? 'Change photo' : 'Upload photo' }}
@@ -53,7 +53,7 @@
   <section class="card card--divided">
     <div class="card-head">
       <h3>Summary</h3>
-      <button type="button" class="btn small" (click)="dialog.set('summary')">Edit</button>
+      <button app-button type="button" variant="ghost" size="sm" (click)="dialog.set('summary')">Edit</button>
     </div>
     <hr class="divider" aria-hidden="true" />
     <div class="card-body">
@@ -64,7 +64,7 @@
   <section class="card card--divided">
     <div class="card-head">
       <h3>Experience</h3>
-      <button type="button" class="btn small" (click)="dialog.set('experience')">Edit</button>
+      <button app-button type="button" variant="ghost" size="sm" (click)="dialog.set('experience')">Edit</button>
     </div>
     <hr class="divider" aria-hidden="true" />
     <div class="card-body">
@@ -75,7 +75,7 @@
   <section class="card card--divided">
     <div class="card-head">
       <h3>Education</h3>
-      <button type="button" class="btn small" (click)="dialog.set('education')">Edit</button>
+      <button app-button type="button" variant="ghost" size="sm" (click)="dialog.set('education')">Edit</button>
     </div>
     <hr class="divider" aria-hidden="true" />
     <div class="card-body">
@@ -86,7 +86,7 @@
   <section class="card card--divided">
     <div class="card-head">
       <h3>Skills</h3>
-      <button type="button" class="btn small" (click)="dialog.set('skills')">Edit</button>
+      <button app-button type="button" variant="ghost" size="sm" (click)="dialog.set('skills')">Edit</button>
     </div>
     <hr class="divider" aria-hidden="true" />
     <div class="card-body">
@@ -99,12 +99,42 @@
   @case ('backup') {
     <app-modal title="Backup &amp; import" (closed)="dialog.set(null)">
       <div class="row wrap">
-        <button type="button" class="btn" (click)="exportVault()">Export (.json)</button>
-        <button type="button" class="btn" (click)="triggerImport()">Import (.json)</button>
-        <button type="button" class="btn" (click)="vs.startOnboarding(); dialog.set(null)">Re-run onboarding wizard</button>
+        <button app-button type="button" variant="secondary" (click)="exportVault()">Export (.json)</button>
+        <button app-button type="button" variant="secondary" (click)="triggerImport()">Import (.json)</button>
+        <button app-button type="button" variant="ghost" (click)="vs.startOnboarding(); dialog.set(null)">Re-run onboarding wizard</button>
         <input #importInput type="file" accept="application/json,.json" hidden (change)="importVault($event)" />
       </div>
       <p class="hint">Data is stored locally on this device. Export regularly to keep backups.</p>
+
+      <hr class="divider" aria-hidden="true" />
+      <div class="danger-zone">
+        <div class="danger-zone__text">
+          <span class="danger-zone__title">Clean slate</span>
+          <p class="hint">Delete all saved data, history, and skills to start completely fresh.</p>
+        </div>
+        <button app-button type="button" variant="danger" size="sm" (click)="dialog.set('confirm-reset')">
+          Delete all data &amp; reset
+        </button>
+      </div>
+    </app-modal>
+  }
+
+  @case ('confirm-reset') {
+    <app-modal title="Reset to clean slate?" (closed)="dialog.set(null)">
+      <div class="confirm-reset-body">
+        <p class="hint">
+          Are you sure you want to delete all user data? This permanently wipes your master vault,
+          experience points, skills, contact details, and job tailoring history from this browser.
+        </p>
+        <div class="row wrap">
+          <button app-button type="button" variant="danger" (click)="executeClearAll()">
+            Yes, delete everything
+          </button>
+          <button app-button type="button" variant="ghost" (click)="dialog.set('backup')">
+            Cancel
+          </button>
+        </div>
+      </div>
     </app-modal>
   }
 
@@ -134,12 +164,12 @@
             }
           </ul>
           <div class="row">
-            <button type="button" class="btn small" (click)="vs.addBullet(e.id)">+ Bullet</button>
-            <button type="button" class="btn small danger" (click)="vs.removeExperience(e.id)">Delete role</button>
+            <button app-button type="button" variant="secondary" size="sm" (click)="vs.addBullet(e.id)">+ Bullet</button>
+            <button app-button type="button" variant="danger" size="sm" (click)="vs.removeExperience(e.id)">Delete role</button>
           </div>
         </fieldset>
       }
-      <button type="button" class="btn" (click)="vs.addExperience()">+ Add role</button>
+      <button app-button type="button" variant="primary" (click)="vs.addExperience()">+ Add role</button>
     </app-modal>
   }
 
@@ -151,10 +181,10 @@
           <label>Degree <input type="text" [(ngModel)]="ed.degree" (ngModelChange)="vs.touch()" /></label>
           <label>Institution <input type="text" [(ngModel)]="ed.institution" (ngModelChange)="vs.touch()" /></label>
           <label>Years <input type="text" [(ngModel)]="ed.year" (ngModelChange)="vs.touch()" /></label>
-          <button type="button" class="btn small danger" (click)="vs.removeEducation(ed.id)">Delete</button>
+          <button app-button type="button" variant="danger" size="sm" (click)="vs.removeEducation(ed.id)">Delete</button>
         </fieldset>
       }
-      <button type="button" class="btn" (click)="vs.addEducation()">+ Add education</button>
+      <button app-button type="button" variant="primary" (click)="vs.addEducation()">+ Add education</button>
     </app-modal>
   }
 
