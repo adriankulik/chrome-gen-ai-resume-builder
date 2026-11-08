@@ -3,6 +3,14 @@ import { AppComponent } from './app.component';
 import { VaultService } from './core/vault.service';
 
 describe('AppComponent', () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  afterEach(() => {
+    localStorage.clear();
+  });
+
   it('renders onboarding when onboarding is not complete', async () => {
     await TestBed.configureTestingModule({ imports: [AppComponent] }).compileComponents();
     const fixture = TestBed.createComponent(AppComponent);

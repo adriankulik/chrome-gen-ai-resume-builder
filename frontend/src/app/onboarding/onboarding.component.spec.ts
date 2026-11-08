@@ -3,6 +3,14 @@ import { OnboardingComponent } from './onboarding.component';
 import { VaultService } from '../core/vault.service';
 
 describe('OnboardingComponent', () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  afterEach(() => {
+    localStorage.clear();
+  });
+
   it('starts at paste step and advances to review upon parsing', async () => {
     await TestBed.configureTestingModule({ imports: [OnboardingComponent] }).compileComponents();
     const fixture = TestBed.createComponent(OnboardingComponent);

@@ -25,9 +25,11 @@ export class VaultService {
   readonly tailoredSkills = signal<string[] | null>(null);
 
   readonly settings = computed(() => this.vault().settings);
+  readonly ready: Promise<void>;
+  private cleared = false;
 
   constructor() {
-    this.init();
+    this.ready = this.init();
     effect(() => {
       const v = this.vault();
       if (this.loaded() && !this.pristine()) {
@@ -40,6 +42,7 @@ export class VaultService {
     try {
       const isDone = await this.storage.get<boolean>(ONBOARDED_KEY);
       const saved = await this.storage.get<unknown>(VAULT_KEY);
+      if (this.cleared) return;
       if (saved) {
         this.setVault(normalizeVault(saved), true);
         this.onboarded.set(isDone ?? true);
@@ -49,6 +52,7 @@ export class VaultService {
       }
     } catch (e) {
       console.warn('Vault load failed, using sample data', e);
+      if (this.cleared) return;
       this.selectAll();
       this.onboarded.set(false);
     }
@@ -177,6 +181,7 @@ export class VaultService {
   }
 
   async clearAllData(): Promise<void> {
+    this.cleared = true;
     await this.storage.clearAll();
     this.pristine.set(true);
     this.vault.set(defaultVault());
