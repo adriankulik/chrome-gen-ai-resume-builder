@@ -1,4 +1,5 @@
-@use "../../styles/variables" as v;
+@use '../../styles/variables' as v;
+@use '../../styles/mixins' as m;
 
 :host {
   display: flex;
@@ -12,33 +13,199 @@
   display: flex;
   flex-direction: column;
   min-height: 100%;
+}
 
-  &.panel-body--triage-collapsed {
-    .card--jd {
-      flex: 1 1 auto;
-      display: flex;
-      flex-direction: column;
-      min-height: 0;
+// ---- Profile Strip at top ----
+.profile-strip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: v.$sp-2;
+  padding: v.$sp-3;
+  background: var(--c-bg-elevated);
+  border: 1px solid var(--c-rule);
+  border-radius: v.$radius-md;
 
-      .jd-field {
-        flex: 1 1 auto;
-        display: flex;
-        flex-direction: column;
-        min-height: 0;
+  &__details {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
 
-        textarea {
-          flex: 1 1 auto;
-          min-height: 280px;
-          height: 100%;
-          resize: vertical;
-        }
-      }
-    }
+  &__name {
+    font-size: v.$fs-sm;
+    font-weight: v.$fw-semibold;
+    color: var(--c-ink-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__meta {
+    @include m.label-mono;
+    font-size: v.$fs-xs;
+    color: var(--c-ink-muted);
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: v.$sp-2;
+    flex: 0 0 auto;
   }
 }
 
-.jd-field {
+// ---- Companion Hero State ----
+.companion-hero {
+  padding: v.$sp-5;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: v.$sp-4;
+  border-color: var(--c-rule-strong);
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: v.$sp-2;
+  }
+
+  .companion-badge {
+    @include m.label-mono;
+    font-size: v.$fs-xs;
+    padding: 2px 8px;
+    border-radius: v.$radius-pill;
+    background: var(--c-chip-bg);
+    border: 1px solid var(--c-chip-border);
+    color: var(--c-accent);
+  }
+
+  .companion-title {
+    font-size: v.$fs-lg;
+    font-weight: v.$fw-semibold;
+    letter-spacing: v.$ls-tight;
+    color: var(--c-ink-primary);
+  }
+
+  .companion-desc {
+    font-size: v.$fs-xs;
+    color: var(--c-ink-secondary);
+    line-height: v.$lh-normal;
+    max-width: 320px;
+  }
+}
+
+.companion-actions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: v.$sp-2;
+
+  .hero-btn {
+    width: 100%;
+    max-width: 340px;
+    box-shadow: 0 4px 12px var(--c-rule-strong);
+  }
+
+  .toggle-manual-btn {
+    margin-top: v.$sp-1;
+  }
+}
+
+.manual-paste-box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: v.$sp-2;
+  margin-top: v.$sp-2;
+
+  textarea {
+    width: 100%;
+    resize: vertical;
+  }
+}
+
+.ai-download-notice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: v.$sp-1;
+  margin-top: v.$sp-2;
+}
+
+// ---- Companion Loading State ----
+.companion-loading {
+  padding: v.$sp-6 v.$sp-4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: v.$sp-3;
+
+  .loading-spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid var(--c-rule);
+    border-top-color: var(--c-accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  .loading-title {
+    font-size: v.$fs-md;
+    font-weight: v.$fw-medium;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ---- Match Results Summary ----
+.card--match-summary {
+  display: flex;
+  flex-direction: column;
+  gap: v.$sp-3;
+
+  .count-large {
+    font-family: v.$font-mono;
+    font-size: v.$fs-lg;
+    font-weight: v.$fw-semibold;
+    color: var(--c-accent);
+  }
+
+  .hint.block {
+    display: block;
+    margin-top: 2px;
+  }
+}
+
+.quick-export-strip {
+  display: flex;
+  gap: v.$sp-2;
+  margin-top: v.$sp-1;
+
+  > button {
+    flex: 1;
+  }
+}
+
+.triage-bottom-bar {
+  display: flex;
+  gap: v.$sp-2;
+  padding: v.$sp-3 0;
+  position: sticky;
+  bottom: 0;
+  background: var(--c-bg);
+  border-top: 1px solid var(--c-rule);
+  z-index: 10;
+
+  > button {
+    flex: 1;
+  }
 }

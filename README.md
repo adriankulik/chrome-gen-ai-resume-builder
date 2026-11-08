@@ -41,9 +41,34 @@ frontend/src/assets/fonts/   # self-hosted woff2 (Inter, Lora, JetBrains Mono)
 
 ---
 
+## Dual-Target Architecture: Web App & Chrome Extension (MV3)
+
+This application is built with a **zero-maintenance dual-target architecture**: the exact same Angular codebase runs as both a hosted web application (GitHub Pages) and a native Manifest V3 Chrome Extension.
+
+### Chrome Extension Features
+- **Chrome Side Panel (`chrome.sidePanel`)**: Opens seamlessly as a dock beside LinkedIn, Indeed, Greenhouse, Lever, or Workday.
+- **1-Click Job Description Extraction**: Click *"Extract from tab"* in the triage panel to pull the job description directly from the active tab's DOM (or currently highlighted text).
+- **Rock-Solid Data Retention (`chrome.storage.local`)**: Automatically stores resumes in persistent disk storage inside the user's Chrome profile (immune to cookie wipes and browser cache clearing), with seamless fallback to `localStorage` in web mode.
+- **Full Tab Mode**: Click *"Full tab"* in the header to expand from the side panel into a panoramic 3-column workspace at any time.
+
+### Loading as an Unpacked Chrome Extension
+1. In `frontend/`, run:
+   ```bash
+   npm run build:extension
+   ```
+2. In Google Chrome, navigate to `chrome://extensions`.
+3. Enable **Developer mode** (top-right toggle).
+4. Click **"Load unpacked"** and select the `frontend/dist/frontend` directory.
+5. Click the extension icon on any job board to open the side panel!
+
+---
+
 ## Available NPM Scripts (in `frontend/`)
 
 - `npm run dev` / `npm start`: Starts the dev server on `0.0.0.0:4200`
 - `npm run build`: Production build into `dist/frontend`
+- `npm run build:gh-pages`: Builds with base-href configured for GitHub Pages
+- `npm run build:extension`: Builds with relative base-href (`./`) for Chrome Extension
+- `npm run pack:extension`: Builds and packages the extension into `dist/chrome-resume-builder-extension.zip`
 - `npm test`: Runs unit tests via Karma + headless Chrome
 - `npm run lint`: Runs ESLint

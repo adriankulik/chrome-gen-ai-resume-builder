@@ -1,61 +1,155 @@
 <div class="panel-body panel-body--triage" [class.panel-body--triage-collapsed]="!triageOpen()">
-  <div class="card-head">
-    <h2 class="panel-title">Job Description &amp; AI Triage</h2>
-    <button
-      app-button
-      type="button"
-      variant="secondary"
-      size="sm"
-      [iconOnly]="true"
-      [iconLeading]="collapseIcon"
-      class="collapse-btn"
-      aria-label="Collapse job description and AI triage"
-      [attr.aria-expanded]="true"
-      (click)="layout.setTriageCollapsed(true)"
-    ></button>
+  <!-- Profile Bar: Shows candidate & quick edit button -->
+  <div class="profile-strip no-print">
+    <div class="profile-strip__details">
+      <span class="profile-strip__name">{{ vs.vault().contact.fullName || 'Candidate Profile' }}</span>
+      <span class="profile-strip__meta">{{ vs.vault().experience.length }} roles &middot; {{ bulletCount }} experience points</span>
+    </div>
+    <div class="profile-strip__actions">
+      <button app-button type="button" variant="ghost" size="sm" (click)="editProfile()" title="Edit your experience, contact info, and vault details">
+        Edit details
+      </button>
+      <button
+        app-button
+        type="button"
+        variant="secondary"
+        size="sm"
+        [iconOnly]="true"
+        [iconLeading]="collapseIcon"
+        class="collapse-btn"
+        aria-label="Collapse panel"
+        [attr.aria-expanded]="true"
+        (click)="layout.setTriageCollapsed(true)"
+      ></button>
+    </div>
   </div>
 
-  <section class="card card--jd">
-    <div class="jd-field">
-      <label for="jd">Target job description</label>
-      <textarea
-        id="jd"
-        [rows]="triageOpen() ? 8 : 16"
-        placeholder="Paste the job description here — analysis starts automatically…"
-        [ngModel]="jd()"
-        (ngModelChange)="jd.set($event)"
-        (paste)="onPaste()"
-      ></textarea>
-    </div>
-    <button type="button" class="btn primary" [disabled]="analyzing() || !jd().trim()" (click)="analyze()">
-      {{ analyzing() ? 'Analyzing…' : 'Analyze & Match' }}
-    </button>
-    @if (source(); as s) {
-      <p class="hint" role="status">Last analysis: {{ s === 'ai' ? 'AI matched' : 'keyword matching' }}.</p>
-    }
-    @if (ai.availability() === 'downloadable' || ai.availability() === 'downloading') {
-      <button type="button" class="btn small" [disabled]="ai.downloadProgress() !== null" (click)="ai.startDownload()">
-        {{ ai.downloadProgress() !== null ? 'Downloading…' : 'Download / resume AI model' }}
-      </button>
-      @if (ai.availability() === 'downloading') {
-        <p class="hint">Stuck? Open <code>chrome://on-device-internals</code> to inspect the model, check free disk space (≥ 22 GB), and use an unmetered connection. Keyword matching works meanwhile.</p>
-      }
-    }
-    @if (error()) { <p class="msg error" role="alert">{{ error() }}</p> }
-  </section>
+  @if (error()) {
+    <p class="msg error" role="alert">{{ error() }}</p>
+  }
 
+  <!-- STATE A: No Job Analyzed Yet (Hero Companion State) -->
+  @if (!matches().length && !analyzing() && !extracting()) {
+    <section class="card companion-hero" aria-label="Target job description">
+      <div class="companion-hero__header">
+        <span class="companion-badge">Companion</span>
+        <h2 class="companion-title">Tailor for this job</h2>
+        <p class="companion-desc">
+          Navigate to any job listing in your browser and click below to match keywords and tailor your resume on-device.
+        </p>
+      </div>
+
+      <div class="companion-actions">
+        @if (ext.isExtension()) {
+          <button
+            app-button
+            type="button"
+            variant="primary"
+            size="lg"
+            [fullWidth]="true"
+            class="hero-btn"
+            [disabled]="extracting() || analyzing()"
+            (click)="extractFromActiveTab()"
+          >
+            &#9889; Extract Job from Current Tab
+          </button>
+        }
+
+        <button
+          app-button
+          type="button"
+          variant="ghost"
+          size="sm"
+          class="toggle-manual-btn"
+          (click)="toggleManualInput()"
+        >
+          {{ showManualInput() || !ext.isExtension() ? 'Hide manual paste' : 'Or paste job description manually' }}
+        </button>
+      </div>
+
+      @if (showManualInput() || !ext.isExtension()) {
+        <div class="manual-paste-box">
+          <label for="jd" class="visually-hidden">Job description text</label>
+          <textarea
+            id="jd"
+            rows="8"
+            placeholder="Paste target job description here — analysis starts automatically on paste…"
+            [ngModel]="jd()"
+            (ngModelChange)="jd.set($event)"
+            (paste)="onPaste()"
+          ></textarea>
+          <button
+            app-button
+            type="button"
+            variant="primary"
+            size="md"
+            [disabled]="analyzing() || !jd().trim()"
+            (click)="analyze()"
+          >
+            Analyze &amp; Match
+          </button>
+        </div>
+      }
+
+      @if (ai.availability() === 'downloadable' || ai.availability() === 'downloading') {
+        <div class="ai-download-notice">
+          <button app-button type="button" variant="secondary" size="sm" [disabled]="ai.downloadProgress() !== null" (click)="ai.startDownload()">
+            {{ ai.downloadProgress() !== null ? 'Downloading AI model…' : 'Download on-device AI model' }}
+          </button>
+          <p class="hint">Keyword matching works immediately while Chrome built-in AI downloads.</p>
+        </div>
+      }
+    </section>
+  }
+
+  <!-- STATE B: Extracting / Analyzing State -->
+  @if (extracting() || analyzing()) {
+    <section class="card companion-loading">
+      <div class="loading-spinner" aria-hidden="true"></div>
+      <h3 class="loading-title">
+        {{ extracting() ? 'Extracting job posting from current tab…' : 'Tailoring resume with on-device AI…' }}
+      </h3>
+      <p class="hint">Matching ATS keywords, tailoring professional summary and selecting relevant bullets.</p>
+    </section>
+  }
+
+  <!-- STATE C: Job Matches & Tailored Content -->
   @if (matches().length) {
+    <!-- Match Results Summary -->
+    <section class="card card--match-summary">
+      <div class="card-head">
+        <div>
+          <span class="count-large">{{ ((matchedCount() / matches().length) * 100).toFixed(0) }}% ATS Match</span>
+          <span class="hint block">{{ matchedCount() }} of {{ matches().length }} keywords covered</span>
+        </div>
+        <div class="row wrap align-center">
+          <button app-button type="button" variant="secondary" size="sm" (click)="resetJob()" title="Clear and match another job posting">
+            &#8634; Match another job
+          </button>
+        </div>
+      </div>
+
+      <div class="match-bar" aria-hidden="true">
+        <div class="match-fill" [style.width.%]="(matchedCount() / matches().length) * 100"></div>
+      </div>
+
+      <div class="quick-export-strip">
+        <button app-button type="button" variant="primary" size="md" (click)="exportPdf()">
+          &#128196; Export PDF
+        </button>
+        <button app-button type="button" variant="ghost" size="md" (click)="viewPreview()">
+          &#128065; Preview Resume
+        </button>
+      </div>
+    </section>
+
+    <!-- Keywords Pill Breakdown -->
     <section class="card card--divided" aria-label="ATS keyword match">
       <div class="card-head">
-        <h3>Keywords &harr; bullets
-          <span class="count">{{ matchedCount() }}/{{ matches().length }}</span>
-        </h3>
+        <h3>Keywords &amp; Bullets</h3>
       </div>
       <hr class="divider" aria-hidden="true" />
       <div class="card-body">
-        <div class="match-bar" aria-hidden="true">
-          <div class="match-fill" [style.width.%]="(matchedCount() / matches().length) * 100"></div>
-        </div>
         <ul class="match-list">
           @for (m of matches(); track m.keyword) {
             <li class="match" [class.ok]="m.bullet" [class.miss]="!m.bullet && !m.inSkills">
@@ -63,10 +157,10 @@
               @if (m.bullet; as b) {
                 <span class="match__bullet">
                   {{ b.text }}
-                  <span class="muted">— {{ b.role }}{{ b.company ? ', ' + b.company : '' }}{{ m.onResume ? '' : ' (not on resume)' }}</span>
+                  <span class="muted">&mdash; {{ b.role }}{{ b.company ? ', ' + b.company : '' }}{{ m.onResume ? '' : ' (not on resume)' }}</span>
                 </span>
               } @else if (m.inSkills) {
-                <span class="match__bullet muted">Covered in skills only — no matching bullet.</span>
+                <span class="match__bullet muted">Covered in skills only &mdash; no matching bullet.</span>
               } @else {
                 <span class="match__bullet muted">Not found in your vault.</span>
               }
@@ -76,63 +170,77 @@
       </div>
     </section>
 
+    <!-- Generated Summary & Skills -->
     <section class="card card--divided" aria-label="Generated summary and skills">
       <div class="card-head">
-        <h3>Generated summary &amp; skills</h3>
+        <h3>Tailored Summary &amp; Skills</h3>
       </div>
       <hr class="divider" aria-hidden="true" />
       <div class="card-body">
-        <label>Summary
+        <label>
+          Summary
           <textarea rows="4" [ngModel]="vs.tailoredSummary() ?? vs.vault().summary" (ngModelChange)="vs.tailoredSummary.set($event)"></textarea>
         </label>
-        <label>Skills (comma separated)
+        <label>
+          Skills (comma separated)
           <textarea rows="2" [ngModel]="(vs.tailoredSkills() ?? vs.vault().skills).join(', ')" (change)="setTailoredSkills($any($event.target).value)"></textarea>
         </label>
-        <p class="hint">Generated from your vault for this job description. Edit freely — the preview updates live.</p>
+        <p class="hint">Tailored for this job description. Changes update the preview immediately.</p>
       </div>
     </section>
-  }
 
-  <app-collapsible title="Bullet triage" [badge]="selectedCount() + ' selected'" [badgeWarn]="selectedCount() > cap()" [(open)]="triageOpen">
-    @if (vs.settings().strictOnePage && selectedCount() > cap()) {
-      <p class="msg error">1-page mode is on: more than {{ cap() }} bullets will likely overflow the page.</p>
-    }
-    <div class="row wrap">
-      <button type="button" class="btn small" (click)="vs.selectAll()">Select all</button>
-      <button type="button" class="btn small" (click)="vs.setSelected([])">Clear</button>
-    </div>
-
-    @for (e of vs.vault().experience; track e.id) {
-      <div class="role-block">
-        <h4>{{ e.role || 'Untitled role' }} <span class="muted">{{ e.company }}</span></h4>
-        <ul class="triage-list">
-          @for (b of e.bullets; track b.id) {
-            <li>
-              <label class="check">
-                <input type="checkbox" [checked]="vs.selectedBulletIds().has(b.id)" (change)="onToggle(b.id, $event)" />
-                <span>{{ b.text }}</span>
-              </label>
-            </li>
-          }
-        </ul>
-
-        @for (p of proposals()[e.id] ?? []; track $index) {
-          <div class="proposal">
-            <textarea rows="3" [ngModel]="p" (ngModelChange)="setProposal(e.id, $index, $event)" [attr.aria-label]="'Suggested bullet ' + ($index + 1)"></textarea>
-            <div class="row">
-              <button type="button" class="btn small primary" (click)="acceptProposal(e.id, $index)">Accept &amp; Edit</button>
-              <button type="button" class="btn small" (click)="dismissProposal(e.id, $index)">Dismiss</button>
-            </div>
-          </div>
-        }
-
-        <button type="button" class="btn small" [disabled]="!jd().trim() || !ai.isAvailable || proposingFor() !== null" (click)="propose(e.id)">
-          {{ proposingFor() === e.id ? 'Thinking…' : 'Suggest bullet for this job description' }}
-        </button>
+    <!-- Bullet Triage -->
+    <app-collapsible title="Bullet triage" [badge]="selectedCount() + ' selected'" [badgeWarn]="selectedCount() > cap()" [(open)]="triageOpen">
+      @if (vs.settings().strictOnePage && selectedCount() > cap()) {
+        <p class="msg error">1-page mode is on: more than {{ cap() }} bullets will likely overflow the page.</p>
+      }
+      <div class="row wrap">
+        <button app-button type="button" variant="secondary" size="sm" (click)="vs.selectAll()">Select all</button>
+        <button app-button type="button" variant="secondary" size="sm" (click)="vs.setSelected([])">Clear</button>
       </div>
-    } @empty {
-      <p class="hint">Add roles in the vault to triage bullets.</p>
-    }
-    <p class="hint">AI suggestions may be inaccurate — only accept statements that are true for you. Accepted bullets are added to the vault, where you can edit them.</p>
-  </app-collapsible>
+
+      @for (e of vs.vault().experience; track e.id) {
+        <div class="role-block">
+          <h4>{{ e.role || 'Untitled role' }} <span class="muted">{{ e.company }}</span></h4>
+          <ul class="triage-list">
+            @for (b of e.bullets; track b.id) {
+              <li>
+                <label class="check">
+                  <input type="checkbox" [checked]="vs.selectedBulletIds().has(b.id)" (change)="onToggle(b.id, $event)" />
+                  <span>{{ b.text }}</span>
+                </label>
+              </li>
+            }
+          </ul>
+
+          @for (p of proposals()[e.id] ?? []; track $index) {
+            <div class="proposal">
+              <textarea rows="3" [ngModel]="p" (ngModelChange)="setProposal(e.id, $index, $event)" [attr.aria-label]="'Suggested bullet ' + ($index + 1)"></textarea>
+              <div class="row">
+                <button app-button type="button" variant="primary" size="sm" (click)="acceptProposal(e.id, $index)">Accept &amp; Edit</button>
+                <button app-button type="button" variant="ghost" size="sm" (click)="dismissProposal(e.id, $index)">Dismiss</button>
+              </div>
+            </div>
+          }
+
+          <button app-button type="button" variant="secondary" size="sm" [disabled]="!jd().trim() || !ai.isAvailable || proposingFor() !== null" (click)="propose(e.id)">
+            {{ proposingFor() === e.id ? 'Thinking…' : 'Suggest bullet for this job' }}
+          </button>
+        </div>
+      } @empty {
+        <p class="hint">Add roles in the vault to triage bullets.</p>
+      }
+      <p class="hint">AI suggestions only describe plausible work &mdash; verify all facts before exporting.</p>
+    </app-collapsible>
+
+    <!-- Bottom Sticky Actions -->
+    <div class="triage-bottom-bar">
+      <button app-button type="button" variant="primary" size="md" [fullWidth]="true" (click)="exportPdf()">
+        &#128196; Export PDF
+      </button>
+      <button app-button type="button" variant="ghost" size="md" [fullWidth]="true" (click)="viewPreview()">
+        &#128065; Preview Resume
+      </button>
+    </div>
+  }
 </div>

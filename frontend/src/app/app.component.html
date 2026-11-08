@@ -1,61 +1,102 @@
 <a class="skip-link" href="#workspace">Skip to workspace</a>
 <header class="app-header no-print">
-  <div class="header-branding">
-    <h1>ATS Resume Builder</h1>
-    <p class="tagline">100% local — your data never leaves this browser.</p>
-  </div>
+  <h1 class="visually-hidden">ATS Resume Builder</h1>
   <div class="header-actions">
     @switch (ai.availability()) {
       @case ('available') {
         <span class="ai-lozenge ai-lozenge--ok" title="Chrome built-in AI (Gemini Nano) ready and running locally">
           <span class="ai-lozenge__dot" aria-hidden="true"></span>
-          Chrome built-in AI ready
+          <span class="ai-lozenge__text">Nano ready</span>
         </span>
       }
       @case ('downloading') {
         <span class="ai-lozenge ai-lozenge--warn" title="Downloading Chrome built-in AI model">
           <span class="ai-lozenge__dot" aria-hidden="true"></span>
-          Chrome AI downloading…
-          @if (ai.downloadProgress() !== null) { {{ (ai.downloadProgress()! * 100).toFixed(0) }}% }
+          <span class="ai-lozenge__text">Downloading… @if (ai.downloadProgress() !== null) { {{ (ai.downloadProgress()! * 100).toFixed(0) }}% }</span>
         </span>
       }
       @case ('downloadable') {
         <span class="ai-lozenge ai-lozenge--warn" title="Chrome AI model is downloadable">
           <span class="ai-lozenge__dot" aria-hidden="true"></span>
-          Chrome AI downloadable
+          <span class="ai-lozenge__text">Downloadable</span>
         </span>
       }
       @default {
         <span class="ai-lozenge ai-lozenge--muted" title="Using local keyword matching">
           <span class="ai-lozenge__dot" aria-hidden="true"></span>
-          Keyword fallback
+          <span class="ai-lozenge__text">Local matching</span>
         </span>
       }
     }
-    <app-theme-toggle />
+    <div class="header-controls">
+      @if (ext.isExtension()) {
+        <button app-button type="button" variant="secondary" size="sm" (click)="ext.openInNewTab()" title="Open ATS Resume Builder in a full browser tab">
+          Full tab
+        </button>
+      }
+      <app-theme-toggle />
+    </div>
   </div>
 </header>
-<nav class="tabs no-print" aria-label="Workspace steps">
-  @for (t of tabs; track t.id) {
-    <button type="button" [class.active]="tab() === t.id" [attr.aria-current]="tab() === t.id ? 'step' : null" (click)="tab.set(t.id)">{{ t.label }}</button>
-  }
-</nav>
-<main id="workspace" class="workspace" [class.vault-collapsed]="layout.vaultCollapsed()" [class.triage-collapsed]="layout.triageCollapsed()" [attr.data-tab]="tab()">
-  <section class="panel panel-vault no-print" [class.collapsed]="layout.vaultCollapsed()" aria-label="Master career vault">
-    <div class="vault-rail">
-      <button app-button type="button" variant="secondary" size="sm" [iconOnly]="true" [iconLeading]="expandIcon"
-        aria-label="Expand master career vault" [attr.aria-expanded]="false" (click)="layout.setVaultCollapsed(false)"></button>
-      <span class="vault-rail__label">Master Career Vault</span>
-    </div>
-    <app-vault-editor />
-  </section>
-  <section class="panel panel-triage no-print" [class.collapsed]="layout.triageCollapsed()" aria-label="Job description and AI triage">
-    <div class="vault-rail triage-rail">
-      <button app-button type="button" variant="secondary" size="sm" [iconOnly]="true" [iconLeading]="expandIcon"
-        aria-label="Expand job description and AI triage" [attr.aria-expanded]="false" (click)="layout.setTriageCollapsed(false)"></button>
-      <span class="vault-rail__label">Job Match &amp; Triage</span>
-    </div>
-    <app-triage />
-  </section>
-  <section class="panel panel-preview" aria-label="A4 preview"><app-preview /></section>
-</main>
+
+@if (!vs.onboarded()) {
+  <app-onboarding />
+} @else {
+  <nav class="tabs no-print" aria-label="Workspace steps">
+    @for (t of tabs; track t.id) {
+      <button
+        type="button"
+        [class.active]="tab() === t.id"
+        [attr.aria-current]="tab() === t.id ? 'step' : null"
+        (click)="layout.setActiveTab(t.id)"
+      >
+        {{ t.label }}
+      </button>
+    }
+  </nav>
+  <main
+    id="workspace"
+    class="workspace"
+    [class.vault-collapsed]="layout.vaultCollapsed()"
+    [class.triage-collapsed]="layout.triageCollapsed()"
+    [attr.data-tab]="tab()"
+  >
+    <section class="panel panel-triage no-print" [class.collapsed]="layout.triageCollapsed()" aria-label="Job description and AI triage">
+      <div class="vault-rail triage-rail">
+        <button
+          app-button
+          type="button"
+          variant="secondary"
+          size="sm"
+          [iconOnly]="true"
+          [iconLeading]="expandIcon"
+          aria-label="Expand job description and AI triage"
+          [attr.aria-expanded]="false"
+          (click)="layout.setTriageCollapsed(false)"
+        ></button>
+        <span class="vault-rail__label">Job Match &amp; Triage</span>
+      </div>
+      <app-triage />
+    </section>
+    <section class="panel panel-vault no-print" [class.collapsed]="layout.vaultCollapsed()" aria-label="Master career vault">
+      <div class="vault-rail">
+        <button
+          app-button
+          type="button"
+          variant="secondary"
+          size="sm"
+          [iconOnly]="true"
+          [iconLeading]="expandIcon"
+          aria-label="Expand master career vault"
+          [attr.aria-expanded]="false"
+          (click)="layout.setVaultCollapsed(false)"
+        ></button>
+        <span class="vault-rail__label">Master Career Vault</span>
+      </div>
+      <app-vault-editor />
+    </section>
+    <section class="panel panel-preview" aria-label="A4 preview">
+      <app-preview />
+    </section>
+  </main>
+}

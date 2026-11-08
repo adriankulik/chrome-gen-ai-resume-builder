@@ -137,6 +137,21 @@
       border-color: var(--c-accent);
     }
   }
+
+  &.app-button--danger {
+    background: transparent;
+    color: var(--c-accent);
+    border-color: var(--c-accent);
+
+    &:hover:not(:disabled) {
+      background: var(--c-chip-bg);
+      border-color: var(--c-accent);
+    }
+  }
+
+  &.app-button--full-width {
+    width: 100%;
+  }
 }
 
 // ---- responsive icon-only (label hidden below breakpoint) ----

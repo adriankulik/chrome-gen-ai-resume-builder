@@ -1,0 +1,198 @@
+<div class="onboarding-container">
+  @if (step() === 'paste') {
+    <div class="onboarding-card">
+      <div class="onboarding-header">
+        <span class="badge">Welcome</span>
+        <h2 class="onboarding-title">Set up your Career Vault</h2>
+        <p class="onboarding-desc">
+          Paste your existing resume, LinkedIn summary, or work history. We'll automatically organize your experience points, summary, and skills on-device.
+        </p>
+      </div>
+
+      <div class="paste-box">
+        <label for="raw-resume" class="visually-hidden">Resume or work history text</label>
+        <textarea
+          id="raw-resume"
+          rows="11"
+          placeholder="Paste your resume or work history here…&#10;&#10;e.g.:&#10;Adrian Kulik | adrian@example.com&#10;&#10;Summary&#10;Frontend Engineer specializing in TypeScript and performance...&#10;&#10;Experience&#10;Frontend Developer at TechCorp (2022 - Present)&#10;- Built responsive web applications and improved core vitals&#10;- Mentored junior engineers and led code reviews&#10;&#10;Skills&#10;TypeScript, Angular, React, CSS, Node.js"
+          [ngModel]="rawText()"
+          (ngModelChange)="rawText.set($event)"
+        ></textarea>
+      </div>
+
+      @if (error()) {
+        <p class="msg error" role="alert">{{ error() }}</p>
+      }
+
+      <div class="onboarding-actions">
+        <button
+          app-button
+          type="button"
+          variant="primary"
+          size="lg"
+          [fullWidth]="true"
+          [disabled]="parsing() || !rawText().trim()"
+          (click)="parse()"
+        >
+          {{ parsing() ? 'Extracting experience with AI…' : 'Extract & Review Experience' }}
+        </button>
+
+        <div class="sub-actions">
+          <button app-button type="button" variant="ghost" size="sm" (click)="loadSample()">
+            Or load sample profile
+          </button>
+        </div>
+      </div>
+
+      <div class="privacy-notice">
+        <span class="privacy-notice__text">100% on-device &amp; private. Your career data never leaves this browser.</span>
+        <button app-button type="button" variant="ghost" size="sm" class="btn-clean-slate" (click)="clearAll()" title="Wipe local storage and reset completely">
+          Reset to clean slate
+        </button>
+      </div>
+    </div>
+  } @else {
+    <div class="onboarding-card review-card">
+      <div class="onboarding-header">
+        <button app-button type="button" variant="ghost" size="sm" class="btn-back" (click)="backToPaste()">
+          &larr; Back to paste
+        </button>
+        <span class="badge">Review &amp; Confirm</span>
+        <h2 class="onboarding-title">Check your profile</h2>
+        <p class="onboarding-desc">
+          Review your extracted summary, experience points, and skills below. You can edit them freely.
+        </p>
+      </div>
+
+      <!-- Contact Info -->
+      <section class="review-section">
+        <h3 class="section-title">Contact Information</h3>
+        <div class="grid-2">
+          <label>
+            Full name
+            <input type="text" [(ngModel)]="draft().contact.fullName" />
+          </label>
+          <label>
+            Email
+            <input type="email" [(ngModel)]="draft().contact.email" />
+          </label>
+          <label>
+            Phone
+            <input type="tel" [(ngModel)]="draft().contact.phone" />
+          </label>
+          <label>
+            Location
+            <input type="text" [(ngModel)]="draft().contact.location" />
+          </label>
+        </div>
+      </section>
+
+      <!-- Professional Summary -->
+      <section class="review-section">
+        <h3 class="section-title">Professional Summary</h3>
+        <textarea
+          rows="3"
+          placeholder="Professional summary…"
+          [(ngModel)]="draft().summary"
+        ></textarea>
+      </section>
+
+      <!-- Experience Points -->
+      <section class="review-section">
+        <div class="section-header">
+          <h3 class="section-title">Experience Points</h3>
+          <span class="count">{{ draft().experience.length }} roles</span>
+        </div>
+
+        <div class="roles-list">
+          @for (e of draft().experience; track e.id; let expIdx = $index) {
+            <div class="role-card">
+              <div class="role-head">
+                <input
+                  type="text"
+                  class="role-title-input"
+                  placeholder="Job Title"
+                  [(ngModel)]="e.role"
+                />
+                <input
+                  type="text"
+                  class="role-company-input"
+                  placeholder="Company"
+                  [(ngModel)]="e.company"
+                />
+              </div>
+
+              <div class="bullets-container">
+                <span class="bullets-label">Bullet points / accomplishments:</span>
+                <ul class="bullets-list">
+                  @for (b of e.bullets; track b.id; let bIdx = $index) {
+                    <li class="bullet-item">
+                      <span class="bullet-dot" aria-hidden="true">&bull;</span>
+                      <textarea
+                        rows="2"
+                        class="bullet-text"
+                        placeholder="Accomplishment / experience point…"
+                        [(ngModel)]="b.text"
+                      ></textarea>
+                      <button
+                        app-button
+                        type="button"
+                        variant="close"
+                        size="sm"
+                        [iconOnly]="true"
+                        [iconLeading]="trashIcon"
+                        aria-label="Remove bullet point"
+                        (click)="removeBullet(expIdx, bIdx)"
+                      ></button>
+                    </li>
+                  }
+                </ul>
+                <button
+                  app-button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  class="btn-add-bullet"
+                  (click)="addBullet(expIdx)"
+                >
+                  + Add point
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- Skills -->
+      <section class="review-section">
+        <div class="section-header">
+          <h3 class="section-title">Skills</h3>
+          <span class="count">{{ draft().skills.length }} skills</span>
+        </div>
+        <div class="chips-preview">
+          @for (s of draft().skills; track s) {
+            <span class="chip">{{ s }}</span>
+          }
+        </div>
+        <label>
+          Edit skills (comma-separated):
+          <input
+            type="text"
+            [ngModel]="draft().skills.join(', ')"
+            (change)="setSkills($any($event.target).value)"
+          />
+        </label>
+      </section>
+
+      <!-- Actions -->
+      <div class="review-sticky-footer">
+        <button app-button type="button" variant="ghost" size="md" (click)="backToPaste()">
+          &larr; Re-paste
+        </button>
+        <button app-button type="button" variant="primary" size="lg" (click)="saveAndProceed()">
+          Save &amp; Start Tailoring &rarr;
+        </button>
+      </div>
+    </div>
+  }
+</div>

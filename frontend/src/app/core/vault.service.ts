@@ -4,6 +4,7 @@ import { MasterVault, normalizeVault, nextId, Experience } from './vault.model';
 import { defaultVault } from './default-vault';
 
 const VAULT_KEY = 'master-vault';
+const ONBOARDED_KEY = 'ats-onboarding-completed';
 
 @Injectable({ providedIn: 'root' })
 export class VaultService {
@@ -11,6 +12,8 @@ export class VaultService {
 
   readonly vault = signal<MasterVault>(defaultVault());
   readonly loaded = signal(false);
+  /** True when the user has completed onboarding (pasted/reviewed their profile) or imported a vault. */
+  readonly onboarded = signal(false);
   /** True until the user adds/edits/imports anything (or a saved vault is loaded). Shows onboarding. */
   readonly pristine = signal(true);
   /** IDs of bullets selected for the current resume (driven by triage). */
@@ -22,9 +25,11 @@ export class VaultService {
   readonly tailoredSkills = signal<string[] | null>(null);
 
   readonly settings = computed(() => this.vault().settings);
+  readonly ready: Promise<void>;
+  private cleared = false;
 
   constructor() {
-    this.init();
+    this.ready = this.init();
     effect(() => {
       const v = this.vault();
       if (this.loaded() && !this.pristine()) {
@@ -35,14 +40,33 @@ export class VaultService {
 
   private async init(): Promise<void> {
     try {
+      const isDone = await this.storage.get<boolean>(ONBOARDED_KEY);
       const saved = await this.storage.get<unknown>(VAULT_KEY);
-      if (saved) this.setVault(normalizeVault(saved), true);
-      else this.selectAll();
+      if (this.cleared) return;
+      if (saved) {
+        this.setVault(normalizeVault(saved), true);
+        this.onboarded.set(isDone ?? true);
+      } else {
+        this.selectAll();
+        this.onboarded.set(isDone ?? false);
+      }
     } catch (e) {
       console.warn('Vault load failed, using sample data', e);
+      if (this.cleared) return;
       this.selectAll();
+      this.onboarded.set(false);
     }
     this.loaded.set(true);
+  }
+
+  completeOnboarding(): void {
+    this.onboarded.set(true);
+    this.storage.set(ONBOARDED_KEY, true).catch(() => undefined);
+  }
+
+  startOnboarding(): void {
+    this.onboarded.set(false);
+    this.storage.set(ONBOARDED_KEY, false).catch(() => undefined);
   }
 
   /** Signals an in-place mutation (e.g. via ngModel) so dependents refresh and the vault persists. */
@@ -154,5 +178,16 @@ export class VaultService {
 
   async clearStorage(): Promise<void> {
     await this.storage.delete(VAULT_KEY);
+  }
+
+  async clearAllData(): Promise<void> {
+    this.cleared = true;
+    await this.storage.clearAll();
+    this.pristine.set(true);
+    this.vault.set(defaultVault());
+    this.onboarded.set(false);
+    this.selectedBulletIds.set(new Set());
+    this.tailoredSummary.set(null);
+    this.tailoredSkills.set(null);
   }
 }

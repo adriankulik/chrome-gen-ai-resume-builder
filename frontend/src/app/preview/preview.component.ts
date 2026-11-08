@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { CollapsibleComponent } from '../collapsible/collapsible.component';
 import { DropdownComponent } from '../dropdown/dropdown.component';
 import { ToggleComponent } from '../toggle/toggle.component';
+import { ButtonComponent } from '../button/button.component';
 import { VaultService } from '../core/vault.service';
 import { THEMES, ThemeName, VaultSettings } from '../core/vault.model';
 
@@ -13,7 +14,7 @@ const A4_H = 297 * MM_PX;
 @Component({
   selector: 'app-preview',
   standalone: true,
-  imports: [FormsModule, DropdownComponent, ToggleComponent, CollapsibleComponent],
+  imports: [FormsModule, DropdownComponent, ToggleComponent, CollapsibleComponent, ButtonComponent],
   templateUrl: './preview.component.html',
 })
 export class PreviewComponent implements AfterViewInit, OnDestroy {

@@ -28,4 +28,13 @@ describe('LayoutService', () => {
     l.setTriageCollapsed(false);
     expect(l.triageCollapsed()).toBeFalse();
   });
+
+  it('switches active tabs', () => {
+    const l = TestBed.inject(LayoutService);
+    expect(l.activeTab()).toBe('triage');
+    l.setActiveTab('vault');
+    expect(l.activeTab()).toBe('vault');
+    l.setActiveTab('preview');
+    expect(l.activeTab()).toBe('preview');
+  });
 });
