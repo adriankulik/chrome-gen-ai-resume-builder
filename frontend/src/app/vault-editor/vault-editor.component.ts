@@ -6,7 +6,7 @@ import { AiService } from '../core/ai.service';
 import { ButtonComponent } from '../button/button.component';
 import { ModalComponent } from '../modal/modal.component';
 import { CollapsibleComponent } from '../collapsible/collapsible.component';
-import { LucideChevronsLeft, LucideX } from '@lucide/angular';
+import { LucideArrowRight, LucideX } from '@lucide/angular';
 import { LayoutService } from '../core/layout.service';
 import { ExtensionService } from '../core/extension.service';
 
@@ -27,7 +27,7 @@ export class VaultEditorComponent {
   private readonly storage = inject(StorageService);
   readonly layout = inject(LayoutService);
   readonly ext = inject(ExtensionService);
-  readonly collapseIcon = LucideChevronsLeft.icon;
+  readonly arrowRightIcon = LucideArrowRight.icon;
 
   readonly dialog = signal<EditorDialog | null>(null);
   readonly removeIcon = LucideX.icon;
@@ -79,19 +79,9 @@ export class VaultEditorComponent {
     return this.vs.vault().experience.reduce((n, e) => n + e.bullets.length, 0);
   }
 
-  collapseVault(): void {
-    if (this.ext.isSidePanel()) {
-      try {
-        window.close();
-      } catch {
-        // Fallback
-      }
-    }
-    if (typeof window !== 'undefined' && window.innerWidth <= 1100) {
-      this.layout.setActiveTab('triage');
-      return;
-    }
-    this.layout.setVaultCollapsed(true);
+  continueToJobMatch(): void {
+    this.layout.setActiveTab('triage');
+    this.layout.setTriageCollapsed(false);
   }
 
   async onPhoto(ev: Event): Promise<void> {

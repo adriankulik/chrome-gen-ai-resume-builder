@@ -1,8 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
-  LucideChevronsLeft,
-  LucideChevronsRight,
   LucideEye,
   LucideFileDown,
   LucideRotateCcw,
@@ -39,15 +37,12 @@ export class TriageComponent {
   readonly ai = inject(AiService);
   readonly ext = inject(ExtensionService);
   readonly layout = inject(LayoutService);
-  readonly collapseIcon = LucideChevronsLeft.icon;
-  readonly expandIcon = LucideChevronsRight.icon;
   readonly exportIcon = LucideFileDown.icon;
   readonly previewIcon = LucideEye.icon;
   readonly zapIcon = LucideZap.icon;
   readonly resetIcon = LucideRotateCcw.icon;
 
   readonly triageOpen = signal(true);
-  readonly profileStripCollapsed = signal(false);
   readonly jd = signal('');
   readonly keywords = signal<string[]>([]);
   readonly source = signal<'ai' | 'fallback' | null>(null);
@@ -90,21 +85,6 @@ export class TriageComponent {
 
   editProfile(): void {
     this.layout.setActiveTab('vault');
-  }
-
-  collapsePanel(): void {
-    if (this.ext.isSidePanel()) {
-      try {
-        window.close();
-      } catch {
-        // Fallback
-      }
-    }
-    if (typeof window !== 'undefined' && window.innerWidth <= 1100) {
-      this.profileStripCollapsed.update((v) => !v);
-      return;
-    }
-    this.layout.setTriageCollapsed(true);
   }
 
   viewPreview(): void {
