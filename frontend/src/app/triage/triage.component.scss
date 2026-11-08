@@ -25,6 +25,11 @@
   background: var(--c-bg-elevated);
   border: 1px solid var(--c-rule);
   border-radius: v.$radius-md;
+  transition: padding v.$dur-fast v.$ease-out;
+
+  &--minimized {
+    padding: v.$sp-2 v.$sp-3;
+  }
 
   &__details {
     display: flex;

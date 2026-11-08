@@ -80,6 +80,19 @@ describe('TriageComponent', () => {
     expect(layoutSpy).toHaveBeenCalledWith('vault');
   });
 
+  it('toggles profileStripCollapsed on small screen or collapses triage on desktop', () => {
+    const collapseSpy = spyOn(layoutService, 'setTriageCollapsed');
+    // Test small screen toggle
+    component.profileStripCollapsed.set(false);
+    component.collapsePanel();
+    // On karma test environment window.innerWidth may be <= 1100px or > 1100px
+    if (window.innerWidth <= 1100) {
+      expect(component.profileStripCollapsed()).toBeTrue();
+    } else {
+      expect(collapseSpy).toHaveBeenCalledWith(true);
+    }
+  });
+
   it('extracts directly when user highlighted text', async () => {
     spyOn(extensionService, 'extractFromActiveTab').and.resolveTo({
       text: 'Senior Rust Developer',

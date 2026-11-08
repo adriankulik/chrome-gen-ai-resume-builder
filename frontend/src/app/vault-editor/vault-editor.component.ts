@@ -8,6 +8,7 @@ import { ModalComponent } from '../modal/modal.component';
 import { CollapsibleComponent } from '../collapsible/collapsible.component';
 import { LucideChevronsLeft, LucideX } from '@lucide/angular';
 import { LayoutService } from '../core/layout.service';
+import { ExtensionService } from '../core/extension.service';
 
 export type EditorDialog = 'backup' | 'summary' | 'experience' | 'education' | 'skills' | 'confirm-reset';
 
@@ -25,6 +26,7 @@ export class VaultEditorComponent {
   readonly ai = inject(AiService);
   private readonly storage = inject(StorageService);
   readonly layout = inject(LayoutService);
+  readonly ext = inject(ExtensionService);
   readonly collapseIcon = LucideChevronsLeft.icon;
 
   readonly dialog = signal<EditorDialog | null>(null);
@@ -75,6 +77,21 @@ export class VaultEditorComponent {
 
   get bulletCount(): number {
     return this.vs.vault().experience.reduce((n, e) => n + e.bullets.length, 0);
+  }
+
+  collapseVault(): void {
+    if (this.ext.isSidePanel()) {
+      try {
+        window.close();
+      } catch {
+        // Fallback
+      }
+    }
+    if (typeof window !== 'undefined' && window.innerWidth <= 1100) {
+      this.layout.setActiveTab('triage');
+      return;
+    }
+    this.layout.setVaultCollapsed(true);
   }
 
   async onPhoto(ev: Event): Promise<void> {
