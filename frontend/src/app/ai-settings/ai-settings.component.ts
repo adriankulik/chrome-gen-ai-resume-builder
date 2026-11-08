@@ -8,11 +8,12 @@ import {
   COMMON_LOCAL_PRESETS,
 } from '../core/ai/ai-provider.model';
 import { ButtonComponent } from '../button/button.component';
+import { RadioCardComponent } from '../radio-card/radio-card.component';
 
 @Component({
   selector: 'app-ai-settings',
   standalone: true,
-  imports: [CommonModule, FormsModule, ButtonComponent],
+  imports: [CommonModule, FormsModule, ButtonComponent, RadioCardComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './ai-settings.component.html',
   styleUrl: './ai-settings.component.scss',

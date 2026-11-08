@@ -41,51 +41,6 @@
   gap: v.$sp-2;
 }
 
-.provider-card {
-  display: flex;
-  align-items: flex-start;
-  gap: v.$sp-2;
-  padding: v.$sp-2 v.$sp-3;
-  border-radius: v.$radius-sm;
-  border: 1px solid var(--c-chip-border);
-  background: var(--c-chip-bg);
-  color: var(--c-ink-primary);
-  cursor: pointer;
-  transition: border-color v.$dur-fast v.$ease-out, background-color v.$dur-fast v.$ease-out;
-
-  input[type='radio'] {
-    margin-top: 3px;
-    accent-color: var(--c-accent);
-  }
-
-  &:hover {
-    border-color: var(--c-rule-strong);
-  }
-
-  &.selected {
-    border-color: var(--c-accent);
-    background: var(--c-bg-elevated);
-  }
-
-  &__content {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  &__title {
-    font-size: v.$fs-sm;
-    font-weight: v.$fw-semibold;
-    color: var(--c-ink-primary);
-  }
-
-  &__desc {
-    font-size: v.$fs-xs;
-    color: var(--c-ink-muted);
-    line-height: v.$lh-snug;
-  }
-}
-
 .preset-chips {
   display: flex;
   align-items: center;
