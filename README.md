@@ -75,6 +75,6 @@ This application is built with a **zero-maintenance dual-target architecture**: 
 - `npm run build`: Production build into `dist/frontend`
 - `npm run build:gh-pages`: Builds with base-href configured for GitHub Pages
 - `npm run build:extension`: Builds with relative base-href (`./`) for Chrome Extension
-- `npm run pack:extension`: Builds and packages the extension into `dist/chrome-resume-builder-extension.zip`
+- `npm run pack:extension`: Builds and packages the extension into `dist/local-resume-extension.zip`
 - `npm test`: Runs unit tests via Karma + headless Chrome
 - `npm run lint`: Runs ESLint
