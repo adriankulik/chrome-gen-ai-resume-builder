@@ -5,6 +5,13 @@ import { defaultVault } from './default-vault';
 
 const VAULT_KEY = 'master-vault';
 const ONBOARDED_KEY = 'ats-onboarding-completed';
+const TAILORED_STATE_KEY = 'tailored-state';
+
+interface SavedTailoredState {
+  selectedBulletIds?: string[];
+  tailoredSummary?: string | null;
+  tailoredSkills?: string[] | null;
+}
 
 @Injectable({ providedIn: 'root' })
 export class VaultService {
@@ -36,12 +43,27 @@ export class VaultService {
         this.storage.set(VAULT_KEY, v).catch((e) => console.warn('Vault save failed (storage full?)', e));
       }
     });
+    effect(() => {
+      const summary = this.tailoredSummary();
+      const skills = this.tailoredSkills();
+      const selected = Array.from(this.selectedBulletIds());
+      if (this.loaded() && !this.pristine()) {
+        this.storage
+          .set(TAILORED_STATE_KEY, {
+            selectedBulletIds: selected,
+            tailoredSummary: summary,
+            tailoredSkills: skills,
+          })
+          .catch(() => undefined);
+      }
+    });
   }
 
   private async init(): Promise<void> {
     try {
       const isDone = await this.storage.get<boolean>(ONBOARDED_KEY);
       const saved = await this.storage.get<unknown>(VAULT_KEY);
+      const tailored = await this.storage.get<SavedTailoredState>(TAILORED_STATE_KEY);
       if (this.cleared) return;
       if (saved) {
         this.setVault(normalizeVault(saved), true);
@@ -49,6 +71,18 @@ export class VaultService {
       } else {
         this.selectAll();
         this.onboarded.set(isDone ?? false);
+      }
+
+      if (tailored) {
+        if (Array.isArray(tailored.selectedBulletIds) && tailored.selectedBulletIds.length > 0) {
+          this.selectedBulletIds.set(new Set(tailored.selectedBulletIds));
+        }
+        if (tailored.tailoredSummary !== undefined) {
+          this.tailoredSummary.set(tailored.tailoredSummary);
+        }
+        if (Array.isArray(tailored.tailoredSkills)) {
+          this.tailoredSkills.set(tailored.tailoredSkills);
+        }
       }
     } catch (e) {
       console.warn('Vault load failed, using sample data', e);
@@ -183,6 +217,7 @@ export class VaultService {
   async clearAllData(): Promise<void> {
     this.cleared = true;
     await this.storage.clearAll();
+    await this.storage.delete(TAILORED_STATE_KEY).catch(() => undefined);
     this.pristine.set(true);
     this.vault.set(defaultVault());
     this.onboarded.set(false);

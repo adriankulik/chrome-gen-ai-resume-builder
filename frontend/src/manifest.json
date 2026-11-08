@@ -8,11 +8,11 @@
     "storage",
     "sidePanel",
     "activeTab",
-    "scripting"
+    "scripting",
+    "tabs"
   ],
   "host_permissions": [
-    "http://localhost/*",
-    "http://127.0.0.1/*"
+    "<all_urls>"
   ],
   "action": {
     "default_title": "Open LocalResume",
@@ -23,7 +23,7 @@
     }
   },
   "side_panel": {
-    "default_path": "index.html"
+    "default_path": "index.html?panel=1"
   },
   "background": {
     "service_worker": "background.js"

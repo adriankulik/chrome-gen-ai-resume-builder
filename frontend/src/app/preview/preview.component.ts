@@ -4,6 +4,7 @@ import { CollapsibleComponent } from '../collapsible/collapsible.component';
 import { DropdownComponent } from '../dropdown/dropdown.component';
 import { ToggleComponent } from '../toggle/toggle.component';
 import { ButtonComponent } from '../button/button.component';
+import { ExtensionService } from '../core/extension.service';
 import { VaultService } from '../core/vault.service';
 import { THEMES, ThemeName, VaultSettings } from '../core/vault.model';
 
@@ -92,11 +93,9 @@ export class PreviewComponent implements AfterViewInit, OnDestroy {
     return m ? `${m[2]}/${m[1]}` : d;
   }
 
+  readonly ext = inject(ExtensionService);
+
   print(): void {
-    const prev = document.title;
-    const name = this.vs.vault().contact.fullName.trim();
-    document.title = name ? `${name} - Resume` : 'Resume';
-    window.print();
-    document.title = prev;
+    this.ext.exportPdf(this.vs.vault().contact.fullName);
   }
 }

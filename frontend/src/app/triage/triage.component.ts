@@ -7,7 +7,7 @@ import { AiService } from '../core/ai.service';
 import { ExtensionService } from '../core/extension.service';
 import { LayoutService } from '../core/layout.service';
 import { VaultService } from '../core/vault.service';
-import { normalize, textHasKeyword } from '../core/keyword-matcher';
+import { extractKeywords, normalize, textHasKeyword } from '../core/keyword-matcher';
 
 export interface KeywordMatch {
   keyword: string;
@@ -42,6 +42,7 @@ export class TriageComponent {
   readonly extracting = signal(false);
   readonly error = signal('');
   readonly showManualInput = signal(false);
+  readonly manualMode = signal(false);
 
   get bulletCount(): number {
     return this.vs.vault().experience.reduce((sum, e) => sum + e.bullets.length, 0);
@@ -56,22 +57,35 @@ export class TriageComponent {
   }
 
   exportPdf(): void {
-    const prev = document.title;
-    const name = this.vs.vault().contact.fullName.trim();
-    document.title = name ? `${name} - Resume` : 'Resume';
-    window.print();
-    document.title = prev;
+    this.layout.setActiveTab('preview');
+    this.ext.exportPdf(this.vs.vault().contact.fullName);
   }
 
   resetJob(): void {
     this.jd.set('');
     this.keywords.set([]);
     this.source.set(null);
+    this.manualMode.set(false);
     this.error.set('');
     this.proposals.set({});
     this.vs.tailoredSummary.set(null);
     this.vs.tailoredSkills.set(null);
     this.vs.selectAll();
+  }
+
+  continueManually(): void {
+    const text = this.jd().trim();
+    this.error.set('');
+    this.manualMode.set(true);
+    if (text) {
+      // Heuristic keyword extraction from JD without AI rewriting bullets or summary
+      const kws = extractKeywords(text, this.vs.vault());
+      this.keywords.set(kws);
+      this.source.set('fallback');
+    }
+    if (this.vs.selectedBulletIds().size === 0) {
+      this.vs.selectAll();
+    }
   }
 
   toggleManualInput(): void {
@@ -138,13 +152,6 @@ export class TriageComponent {
     }
   }
 
-  /** Auto-run the analysis as soon as a job description is pasted. */
-  onPaste(): void {
-    setTimeout(() => {
-      if (this.jd().trim() && !this.analyzing()) this.analyze();
-    }, 50);
-  }
-
   /** One-click extract from the active tab when running as a Chrome extension. */
   async extractFromActiveTab(): Promise<void> {
     this.extracting.set(true);
@@ -153,7 +160,7 @@ export class TriageComponent {
       const text = await this.ext.extractFromActiveTab();
       if (text) {
         this.jd.set(text);
-        await this.analyze();
+        this.showManualInput.set(true);
       } else {
         this.error.set('Could not extract job description from active tab. Highlight the text or paste directly.');
       }
