@@ -1,14 +1,14 @@
 {
-  "name": "local-resume",
+  "name": "local-ai-resume",
   "version": "0.1.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --host 0.0.0.0",
     "dev": "ng serve --host 0.0.0.0",
     "build": "ng build",
-    "build:gh-pages": "ng build --base-href /local-resume/",
+    "build:gh-pages": "ng build --base-href /local-ai-resume/",
     "build:extension": "ng build --base-href ./",
-    "pack:extension": "npm run build:extension && (cd dist/frontend && zip -FSr ../local-resume-extension.zip .)",
+    "pack:extension": "npm run build:extension && (cd dist/frontend && zip -FSr ../local-ai-resume-extension.zip .)",
     "watch": "ng build --watch --configuration development",
     "test": "ng test --watch=false --browsers=ChromeHeadlessCI",
     "lint": "ng lint"
