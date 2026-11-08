@@ -29,7 +29,7 @@
   }
 
   <!-- STATE A: No Job Analyzed Yet (Hero Companion State) -->
-  @if (!matches().length && !analyzing() && !extracting()) {
+  @if (!matches().length && !manualMode() && !analyzing() && !extracting()) {
     <section class="card companion-hero" aria-label="Target job description">
       <div class="companion-hero__header">
         <span class="companion-badge">Companion</span>
@@ -55,16 +55,28 @@
           </button>
         }
 
-        <button
-          app-button
-          type="button"
-          variant="ghost"
-          size="sm"
-          class="toggle-manual-btn"
-          (click)="toggleManualInput()"
-        >
-          {{ showManualInput() || !ext.isExtension() ? 'Hide manual paste' : 'Or paste job description manually' }}
-        </button>
+        <div class="row wrap align-center gap-2">
+          <button
+            app-button
+            type="button"
+            variant="ghost"
+            size="sm"
+            class="toggle-manual-btn"
+            (click)="toggleManualInput()"
+          >
+            {{ showManualInput() || !ext.isExtension() ? 'Hide manual paste' : 'Or paste job description manually' }}
+          </button>
+          <button
+            app-button
+            type="button"
+            variant="ghost"
+            size="sm"
+            (click)="continueManually()"
+            title="Triage your bullets and resume manually without a job description"
+          >
+            Continue manually
+          </button>
+        </div>
       </div>
 
       @if (showManualInput() || !ext.isExtension()) {
@@ -73,21 +85,32 @@
           <textarea
             id="jd"
             rows="8"
-            placeholder="Paste target job description here — analysis starts automatically on paste…"
+            placeholder="Paste target job description here…"
             [ngModel]="jd()"
             (ngModelChange)="jd.set($event)"
-            (paste)="onPaste()"
           ></textarea>
-          <button
-            app-button
-            type="button"
-            variant="primary"
-            size="md"
-            [disabled]="analyzing() || !jd().trim()"
-            (click)="analyze()"
-          >
-            Analyze &amp; Match
-          </button>
+          <div class="row wrap gap-2" style="margin-top: 8px;">
+            <button
+              app-button
+              type="button"
+              variant="primary"
+              size="md"
+              [disabled]="analyzing() || !jd().trim()"
+              (click)="analyze()"
+            >
+              &#9889; Tailor with AI
+            </button>
+            <button
+              app-button
+              type="button"
+              variant="secondary"
+              size="md"
+              [disabled]="analyzing()"
+              (click)="continueManually()"
+            >
+              Continue Manually
+            </button>
+          </div>
         </div>
       }
 
@@ -114,24 +137,36 @@
   }
 
   <!-- STATE C: Job Matches & Tailored Content -->
-  @if (matches().length) {
+  @if (matches().length || manualMode()) {
     <!-- Match Results Summary -->
     <section class="card card--match-summary">
       <div class="card-head">
         <div>
-          <span class="count-large">{{ ((matchedCount() / matches().length) * 100).toFixed(0) }}% ATS Match</span>
-          <span class="hint block">{{ matchedCount() }} of {{ matches().length }} keywords covered</span>
+          @if (matches().length) {
+            <span class="count-large">{{ ((matchedCount() / matches().length) * 100).toFixed(0) }}% ATS Match</span>
+            <span class="hint block">{{ matchedCount() }} of {{ matches().length }} keywords covered</span>
+          } @else {
+            <span class="count-large">Manual Curation</span>
+            <span class="hint block">Review bullets, summary, and skills below</span>
+          }
         </div>
-        <div class="row wrap align-center">
+        <div class="row wrap align-center gap-2">
+          @if (jd().trim() && source() !== 'ai') {
+            <button app-button type="button" variant="secondary" size="sm" [disabled]="analyzing()" (click)="analyze()" title="Run AI tailoring on the job description">
+              &#9889; Tailor with AI
+            </button>
+          }
           <button app-button type="button" variant="secondary" size="sm" (click)="resetJob()" title="Clear and match another job posting">
             &#8634; Match another job
           </button>
         </div>
       </div>
 
-      <div class="match-bar" aria-hidden="true">
-        <div class="match-fill" [style.width.%]="(matchedCount() / matches().length) * 100"></div>
-      </div>
+      @if (matches().length) {
+        <div class="match-bar" aria-hidden="true">
+          <div class="match-fill" [style.width.%]="(matchedCount() / matches().length) * 100"></div>
+        </div>
+      }
 
       <div class="quick-export-strip">
         <button app-button type="button" variant="primary" size="md" (click)="exportPdf()">
@@ -144,31 +179,33 @@
     </section>
 
     <!-- Keywords Pill Breakdown -->
-    <section class="card card--divided" aria-label="ATS keyword match">
-      <div class="card-head">
-        <h3>Keywords &amp; Bullets</h3>
-      </div>
-      <hr class="divider" aria-hidden="true" />
-      <div class="card-body">
-        <ul class="match-list">
-          @for (m of matches(); track m.keyword) {
-            <li class="match" [class.ok]="m.bullet" [class.miss]="!m.bullet && !m.inSkills">
-              <span class="chip" [class.ok]="m.bullet || m.inSkills" [class.miss]="!m.bullet && !m.inSkills">{{ m.keyword }}</span>
-              @if (m.bullet; as b) {
-                <span class="match__bullet">
-                  {{ b.text }}
-                  <span class="muted">&mdash; {{ b.role }}{{ b.company ? ', ' + b.company : '' }}{{ m.onResume ? '' : ' (not on resume)' }}</span>
-                </span>
-              } @else if (m.inSkills) {
-                <span class="match__bullet muted">Covered in skills only &mdash; no matching bullet.</span>
-              } @else {
-                <span class="match__bullet muted">Not found in your vault.</span>
-              }
-            </li>
-          }
-        </ul>
-      </div>
-    </section>
+    @if (matches().length) {
+      <section class="card card--divided" aria-label="ATS keyword match">
+        <div class="card-head">
+          <h3>Keywords &amp; Bullets</h3>
+        </div>
+        <hr class="divider" aria-hidden="true" />
+        <div class="card-body">
+          <ul class="match-list">
+            @for (m of matches(); track m.keyword) {
+              <li class="match" [class.ok]="m.bullet" [class.miss]="!m.bullet && !m.inSkills">
+                <span class="chip" [class.ok]="m.bullet || m.inSkills" [class.miss]="!m.bullet && !m.inSkills">{{ m.keyword }}</span>
+                @if (m.bullet; as b) {
+                  <span class="match__bullet">
+                    {{ b.text }}
+                    <span class="muted">&mdash; {{ b.role }}{{ b.company ? ', ' + b.company : '' }}{{ m.onResume ? '' : ' (not on resume)' }}</span>
+                  </span>
+                } @else if (m.inSkills) {
+                  <span class="match__bullet muted">Covered in skills only &mdash; no matching bullet.</span>
+                } @else {
+                  <span class="match__bullet muted">Not found in your vault.</span>
+                }
+              </li>
+            }
+          </ul>
+        </div>
+      </section>
+    }
 
     <!-- Generated Summary & Skills -->
     <section class="card card--divided" aria-label="Generated summary and skills">
