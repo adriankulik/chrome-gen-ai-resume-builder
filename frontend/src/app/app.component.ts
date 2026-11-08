@@ -64,6 +64,15 @@ export class AppComponent implements OnInit {
         // Wait for preview stage and font rendering to stabilize before printing
         setTimeout(() => {
           this.ext.exportPdf(this.vs.vault().contact.fullName);
+          if (typeof window !== 'undefined') {
+            window.addEventListener(
+              'afterprint',
+              () => {
+                window.close();
+              },
+              { once: true },
+            );
+          }
         }, 500);
       }
     } catch {

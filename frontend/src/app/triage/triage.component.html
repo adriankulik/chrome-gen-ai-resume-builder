@@ -132,9 +132,11 @@
     <section class="card companion-loading">
       <div class="loading-spinner" aria-hidden="true"></div>
       <h3 class="loading-title">
-        {{ extracting() ? 'Extracting job posting from current tab…' : 'Tailoring resume with on-device AI…' }}
+        {{ distilling() ? 'Distilling job description with on-device AI…' : extracting() ? 'Extracting page from current tab…' : 'Tailoring resume with on-device AI…' }}
       </h3>
-      <p class="hint">Matching ATS keywords, tailoring professional summary and selecting relevant bullets.</p>
+      <p class="hint">
+        {{ distilling() ? 'Isolating job title, requirements, and responsibilities while removing web boilerplate.' : 'Matching ATS keywords, tailoring professional summary and selecting relevant bullets.' }}
+      </p>
     </section>
   }
 

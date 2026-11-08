@@ -18,7 +18,23 @@ export interface TriageResult extends FallbackTriage {
   source: 'ai' | 'fallback';
 }
 
+export interface DistilledJob {
+  title?: string;
+  company?: string;
+  description: string;
+}
+
 const LANGUAGE_RULE = 'Always write in English.';
+
+const distillationSchema = {
+  type: 'object',
+  properties: {
+    title: { type: 'string' },
+    company: { type: 'string' },
+    description: { type: 'string' },
+  },
+  required: ['description'],
+};
 
 const triageSchema = {
   type: 'object',
@@ -359,6 +375,43 @@ export class AiService {
     } catch (e) {
       console.warn('AI resume parsing failed, using heuristic fallback', e);
       return fallbackParseResume(text, base);
+    }
+  }
+
+  /**
+   * Distills a raw, noisy webpage extraction into a clean, focused job description
+   * using the active on-device AI provider (Gemini Nano, Ollama, LM Studio).
+   * Strips web navigation, cookie banners, footer links, and extraneous site boilerplate
+   * while keeping full responsibilities, requirements, and tech stack criteria.
+   * If AI is unavailable or fails, gracefully returns the raw text.
+   */
+  async distillJobDescription(rawText: string): Promise<DistilledJob> {
+    const trimmed = rawText.trim();
+    if (!trimmed) {
+      return { description: '' };
+    }
+
+    const system =
+      'You are an expert recruitment assistant. From the provided raw webpage text, extract the target job posting. ' +
+      'Keep the full job title, company name, and the complete description: role summary, core responsibilities, qualifications, required skills, preferred experience, tech stack, and benefits. ' +
+      'Remove website navigation menus, search bars, cookie/privacy notices, footer links, copyright notices, and unrelated job listings. ' +
+      'Do not summarize or shorten the requirements or responsibilities; preserve the full criteria for ATS matching. ' +
+      LANGUAGE_RULE;
+
+    try {
+      const res = await this.promptJson<DistilledJob>(system, trimmed, distillationSchema);
+      const cleanDesc = (res.description ?? '').trim();
+      if (!cleanDesc) {
+        return { description: trimmed };
+      }
+      return {
+        title: res.title?.trim() || undefined,
+        company: res.company?.trim() || undefined,
+        description: cleanDesc,
+      };
+    } catch (e) {
+      console.warn('AI job distillation failed, falling back to raw extracted text', e);
+      return { description: trimmed };
     }
   }
 }
