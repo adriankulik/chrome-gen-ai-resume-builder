@@ -12,6 +12,7 @@ import { PreviewComponent } from './preview/preview.component';
 import { OnboardingComponent } from './onboarding/onboarding.component';
 import { ModalComponent } from './modal/modal.component';
 import { AiSettingsComponent } from './ai-settings/ai-settings.component';
+import { AiLozengeComponent } from './ai-lozenge/ai-lozenge.component';
 
 @Component({
   selector: 'app-root',
@@ -25,6 +26,7 @@ import { AiSettingsComponent } from './ai-settings/ai-settings.component';
     OnboardingComponent,
     ModalComponent,
     AiSettingsComponent,
+    AiLozengeComponent,
   ],
   templateUrl: './app.component.html',
 })

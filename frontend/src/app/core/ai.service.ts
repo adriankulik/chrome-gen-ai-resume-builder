@@ -151,9 +151,9 @@ export class AiService {
       const nanoStatus = await this.nanoProvider.checkAvailabilityStatus();
       this.availability.set(nanoStatus);
       if (nanoStatus === 'available') {
-        this.activeProviderLabel.set('Nano ready');
+        this.activeProviderLabel.set('Gemini Nano');
       } else if (nanoStatus === 'downloading') {
-        this.activeProviderLabel.set('Downloading Nano…');
+        this.activeProviderLabel.set('Downloading Gemini Nano…');
       } else if (nanoStatus === 'downloadable') {
         this.activeProviderLabel.set('Downloadable');
       } else {
@@ -180,11 +180,11 @@ export class AiService {
     const nanoStatus = await this.nanoProvider.checkAvailabilityStatus();
     if (nanoStatus === 'available') {
       this.availability.set('available');
-      this.activeProviderLabel.set('Nano ready');
+      this.activeProviderLabel.set('Gemini Nano');
     } else if (nanoStatus === 'downloading' || nanoStatus === 'downloadable') {
       this.availability.set(nanoStatus);
       this.activeProviderLabel.set(
-        nanoStatus === 'downloading' ? 'Downloading Nano…' : 'Downloadable',
+        nanoStatus === 'downloading' ? 'Downloading Gemini Nano…' : 'Downloadable',
       );
     } else {
       // Chrome Nano is unavailable; test local runner

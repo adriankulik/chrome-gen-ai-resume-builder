@@ -2,32 +2,7 @@
 <header class="app-header no-print">
   <h1 class="visually-hidden">LocalResume</h1>
   <div class="header-actions">
-    @switch (ai.availability()) {
-      @case ('available') {
-        <button type="button" class="ai-lozenge ai-lozenge--ok" (click)="aiSettingsOpen.set(true)" title="Click to configure AI engine (Gemini Nano, Ollama, LM Studio)">
-          <span class="ai-lozenge__dot" aria-hidden="true"></span>
-          <span class="ai-lozenge__text">{{ ai.activeProviderLabel() }}</span>
-        </button>
-      }
-      @case ('downloading') {
-        <button type="button" class="ai-lozenge ai-lozenge--warn" (click)="aiSettingsOpen.set(true)" title="Downloading Chrome built-in AI model — click to configure">
-          <span class="ai-lozenge__dot" aria-hidden="true"></span>
-          <span class="ai-lozenge__text">Downloading… @if (ai.downloadProgress() !== null) { {{ (ai.downloadProgress()! * 100).toFixed(0) }}% }</span>
-        </button>
-      }
-      @case ('downloadable') {
-        <button type="button" class="ai-lozenge ai-lozenge--warn" (click)="aiSettingsOpen.set(true)" title="Chrome AI model is downloadable — click to configure">
-          <span class="ai-lozenge__dot" aria-hidden="true"></span>
-          <span class="ai-lozenge__text">Downloadable</span>
-        </button>
-      }
-      @default {
-        <button type="button" class="ai-lozenge ai-lozenge--muted" (click)="aiSettingsOpen.set(true)" title="Using local keyword matching — click to connect Ollama/LM Studio">
-          <span class="ai-lozenge__dot" aria-hidden="true"></span>
-          <span class="ai-lozenge__text">{{ ai.activeProviderLabel() }}</span>
-        </button>
-      }
-    }
+    <app-ai-lozenge (openSettings)="aiSettingsOpen.set(true)" />
     <div class="header-controls">
       @if (ext.isExtension()) {
         <button app-button type="button" variant="secondary" size="sm" (click)="ext.openInNewTab()" title="Open ATS Resume Builder in a full browser tab">
