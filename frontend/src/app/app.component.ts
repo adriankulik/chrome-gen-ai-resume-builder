@@ -45,7 +45,7 @@ export class AppComponent implements OnInit {
 
   readonly tabs: { id: WorkspaceTab; label: string }[] = [
     { id: 'triage', label: '1. Job match' },
-    { id: 'vault', label: '2. Vault & Edit' },
+    { id: 'vault', label: '2. Vault' },
     { id: 'preview', label: '3. Preview' },
   ];
 

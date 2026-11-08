@@ -34,6 +34,15 @@ export class VaultEditorComponent {
   readonly rawText = signal('');
   readonly message = signal<{ kind: 'ok' | 'error'; text: string } | null>(null);
   readonly parsing = signal(false);
+
+  readonly parsingMessages = [
+    'Parsing resume structure…',
+    'Extracting contact & links…',
+    'Organizing work history & roles…',
+    'Isolating impact-driven bullets…',
+    'Extracting core technical skills…',
+    'Finalizing Career Vault…',
+  ];
   private readonly importInput = viewChild<ElementRef<HTMLInputElement>>('importInput');
 
   constructor() {

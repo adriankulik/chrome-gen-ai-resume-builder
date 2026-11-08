@@ -29,7 +29,7 @@
   }
 
   <!-- STATE A: No Job Analyzed Yet (Hero Companion State) -->
-  @if (!matches().length && !manualMode() && !analyzing() && !extracting()) {
+  @if (!matches().length && !manualMode()) {
     <section class="card companion-hero" aria-label="Target job description">
       <div class="companion-hero__header">
         <span class="companion-badge">Companion</span>
@@ -49,7 +49,9 @@
             [fullWidth]="true"
             class="hero-btn"
             [iconLeading]="zapIcon"
-            [disabled]="extracting() || analyzing()"
+            [loading]="extracting()"
+            [loadingMessages]="extractingMessages"
+            [disabled]="analyzing()"
             (click)="extractFromActiveTab()"
           >
             Extract Job from Current Tab
@@ -97,7 +99,9 @@
               variant="primary"
               size="md"
               [iconLeading]="zapIcon"
-              [disabled]="analyzing() || !jd().trim()"
+              [loading]="analyzing()"
+              [loadingMessages]="tailoringMessages"
+              [disabled]="extracting() || !jd().trim()"
               (click)="analyze()"
             >
               Tailor with AI
@@ -107,7 +111,7 @@
               type="button"
               variant="secondary"
               size="md"
-              [disabled]="analyzing()"
+              [disabled]="analyzing() || extracting()"
               (click)="continueManually()"
             >
               Continue Manually
@@ -127,19 +131,6 @@
     </section>
   }
 
-  <!-- STATE B: Extracting / Analyzing State -->
-  @if (extracting() || analyzing()) {
-    <section class="card companion-loading">
-      <div class="loading-spinner" aria-hidden="true"></div>
-      <h3 class="loading-title">
-        {{ distilling() ? 'Distilling job description with on-device AI…' : extracting() ? 'Extracting page from current tab…' : 'Tailoring resume with on-device AI…' }}
-      </h3>
-      <p class="hint">
-        {{ distilling() ? 'Isolating job title, requirements, and responsibilities while removing web boilerplate.' : 'Matching ATS keywords, tailoring professional summary and selecting relevant bullets.' }}
-      </p>
-    </section>
-  }
-
   <!-- STATE C: Job Matches & Tailored Content -->
   @if (matches().length || manualMode()) {
     <!-- Match Results Summary -->
@@ -156,7 +147,17 @@
         </div>
         <div class="row wrap align-center gap-2">
           @if (jd().trim() && source() !== 'ai') {
-            <button app-button type="button" variant="secondary" size="sm" [iconLeading]="zapIcon" [disabled]="analyzing()" (click)="analyze()" title="Run AI tailoring on the job description">
+            <button
+              app-button
+              type="button"
+              variant="secondary"
+              size="sm"
+              [iconLeading]="zapIcon"
+              [loading]="analyzing()"
+              [loadingMessages]="tailoringMessages"
+              (click)="analyze()"
+              title="Run AI tailoring on the job description"
+            >
               Tailor with AI
             </button>
           }
@@ -264,8 +265,17 @@
             </div>
           }
 
-          <button app-button type="button" variant="secondary" size="sm" [disabled]="!jd().trim() || !ai.isAvailable || proposingFor() !== null" (click)="propose(e.id)">
-            {{ proposingFor() === e.id ? 'Thinking…' : 'Suggest bullet for this job' }}
+          <button
+            app-button
+            type="button"
+            variant="secondary"
+            size="sm"
+            [disabled]="!jd().trim() || !ai.isAvailable || (proposingFor() !== null && proposingFor() !== e.id)"
+            [loading]="proposingFor() === e.id"
+            [loadingMessages]="proposingMessages"
+            (click)="propose(e.id)"
+          >
+            Suggest bullet for this job
           </button>
         </div>
       } @empty {

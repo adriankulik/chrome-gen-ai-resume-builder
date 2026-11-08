@@ -214,6 +214,26 @@ fieldset.role {
 
 .card-head { display: flex; justify-content: space-between; align-items: center; gap: v.$sp-3; }
 .card-head__left { display: flex; align-items: center; gap: v.$sp-2; flex-wrap: wrap; }
+.card-head--vault {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: v.$sp-2;
+  flex-wrap: wrap;
+}
+.vault-head__actions {
+  display: flex;
+  align-items: center;
+  gap: v.$sp-2;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+@media (min-width: 1101px) {
+  .back-to-triage-btn {
+    display: none;
+  }
+}
 .summary-text { font-size: v.$fs-sm; color: var(--c-ink-secondary); line-height: v.$lh-snug;
   display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .bullet-edit li > [app-button] { flex: 0 0 auto; margin-top: v.$sp-1; }
