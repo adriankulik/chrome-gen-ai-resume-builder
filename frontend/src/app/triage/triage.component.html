@@ -48,10 +48,11 @@
             size="lg"
             [fullWidth]="true"
             class="hero-btn"
+            [iconLeading]="zapIcon"
             [disabled]="extracting() || analyzing()"
             (click)="extractFromActiveTab()"
           >
-            &#9889; Extract Job from Current Tab
+            Extract Job from Current Tab
           </button>
         }
 
@@ -95,10 +96,11 @@
               type="button"
               variant="primary"
               size="md"
+              [iconLeading]="zapIcon"
               [disabled]="analyzing() || !jd().trim()"
               (click)="analyze()"
             >
-              &#9889; Tailor with AI
+              Tailor with AI
             </button>
             <button
               app-button
@@ -152,12 +154,12 @@
         </div>
         <div class="row wrap align-center gap-2">
           @if (jd().trim() && source() !== 'ai') {
-            <button app-button type="button" variant="secondary" size="sm" [disabled]="analyzing()" (click)="analyze()" title="Run AI tailoring on the job description">
-              &#9889; Tailor with AI
+            <button app-button type="button" variant="secondary" size="sm" [iconLeading]="zapIcon" [disabled]="analyzing()" (click)="analyze()" title="Run AI tailoring on the job description">
+              Tailor with AI
             </button>
           }
-          <button app-button type="button" variant="secondary" size="sm" (click)="resetJob()" title="Clear and match another job posting">
-            &#8634; Match another job
+          <button app-button type="button" variant="secondary" size="sm" [iconLeading]="resetIcon" (click)="resetJob()" title="Clear and match another job posting">
+            Match another job
           </button>
         </div>
       </div>
@@ -169,11 +171,11 @@
       }
 
       <div class="quick-export-strip">
-        <button app-button type="button" variant="primary" size="md" (click)="exportPdf()">
-          &#128196; Export PDF
+        <button app-button type="button" variant="primary" size="md" [iconLeading]="exportIcon" (click)="exportPdf()">
+          Export PDF
         </button>
-        <button app-button type="button" variant="ghost" size="md" (click)="viewPreview()">
-          &#128065; Preview Resume
+        <button app-button type="button" variant="ghost" size="md" [iconLeading]="previewIcon" (click)="viewPreview()">
+          Preview Resume
         </button>
       </div>
     </section>
@@ -272,11 +274,11 @@
 
     <!-- Bottom Sticky Actions -->
     <div class="triage-bottom-bar">
-      <button app-button type="button" variant="primary" size="md" [fullWidth]="true" (click)="exportPdf()">
-        &#128196; Export PDF
+      <button app-button type="button" variant="primary" size="md" [fullWidth]="true" [iconLeading]="exportIcon" (click)="exportPdf()">
+        Export PDF
       </button>
-      <button app-button type="button" variant="ghost" size="md" [fullWidth]="true" (click)="viewPreview()">
-        &#128065; Preview Resume
+      <button app-button type="button" variant="ghost" size="md" [fullWidth]="true" [iconLeading]="previewIcon" (click)="viewPreview()">
+        Preview Resume
       </button>
     </div>
   }

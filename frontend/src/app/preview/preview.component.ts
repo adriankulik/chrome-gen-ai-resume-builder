@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, computed, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { LucideFileDown } from '@lucide/angular';
 import { CollapsibleComponent } from '../collapsible/collapsible.component';
 import { DropdownComponent } from '../dropdown/dropdown.component';
 import { ToggleComponent } from '../toggle/toggle.component';
@@ -21,6 +22,7 @@ const A4_H = 297 * MM_PX;
 export class PreviewComponent implements AfterViewInit, OnDestroy {
   readonly vs = inject(VaultService);
   readonly themes = THEMES;
+  readonly exportIcon = LucideFileDown.icon;
 
   private readonly stage = viewChild.required<ElementRef<HTMLElement>>('stage');
   private readonly sheet = viewChild.required<ElementRef<HTMLElement>>('sheet');
