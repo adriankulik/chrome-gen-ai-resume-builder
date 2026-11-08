@@ -3,6 +3,7 @@ import { TriageComponent } from './triage.component';
 import { VaultService } from '../core/vault.service';
 import { ExtensionService } from '../core/extension.service';
 import { LayoutService } from '../core/layout.service';
+import { AiService } from '../core/ai.service';
 
 describe('TriageComponent', () => {
   let component: TriageComponent;
@@ -10,6 +11,7 @@ describe('TriageComponent', () => {
   let vaultService: VaultService;
   let layoutService: LayoutService;
   let extensionService: ExtensionService;
+  let aiService: AiService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -21,6 +23,7 @@ describe('TriageComponent', () => {
     vaultService = TestBed.inject(VaultService);
     layoutService = TestBed.inject(LayoutService);
     extensionService = TestBed.inject(ExtensionService);
+    aiService = TestBed.inject(AiService);
     fixture.detectChanges();
   });
 
@@ -75,6 +78,51 @@ describe('TriageComponent', () => {
     const layoutSpy = spyOn(layoutService, 'setActiveTab');
     component.editProfile();
     expect(layoutSpy).toHaveBeenCalledWith('vault');
+  });
+
+  it('extracts directly when user highlighted text', async () => {
+    spyOn(extensionService, 'extractFromActiveTab').and.resolveTo({
+      text: 'Senior Rust Developer',
+      isUserSelection: true,
+    });
+    const distillSpy = spyOn(aiService, 'distillJobDescription');
+
+    await component.extractFromActiveTab();
+
+    expect(component.jd()).toBe('Senior Rust Developer');
+    expect(component.showManualInput()).toBeTrue();
+    expect(distillSpy).not.toHaveBeenCalled();
+  });
+
+  it('distills job description with AI when page content is extracted and AI is available', async () => {
+    spyOn(extensionService, 'extractFromActiveTab').and.resolveTo({
+      text: 'Header Nav\nStaff Engineer at Acme Corp\nBuild distributed systems\nFooter',
+      isUserSelection: false,
+    });
+    spyOn(aiService, 'resolveActiveProvider').and.resolveTo({
+      id: 'chrome-nano',
+      name: 'Mock Provider',
+      isAvailable: async () => true,
+      generateJson: async <T>() => ({} as unknown as T),
+    });
+    spyOn(aiService, 'distillJobDescription').and.resolveTo({
+      title: 'Staff Engineer',
+      company: 'Acme Corp',
+      description: 'Staff Engineer at Acme Corp. Build distributed systems.',
+    });
+
+    await component.extractFromActiveTab();
+
+    expect(component.jd()).toBe('Staff Engineer at Acme Corp. Build distributed systems.');
+    expect(component.showManualInput()).toBeTrue();
+  });
+
+  it('sets error message when extraction fails', async () => {
+    spyOn(extensionService, 'extractFromActiveTab').and.resolveTo(null);
+
+    await component.extractFromActiveTab();
+
+    expect(component.error()).toContain('Could not extract job description');
   });
 
   it('resets job and manual mode on resetJob', () => {

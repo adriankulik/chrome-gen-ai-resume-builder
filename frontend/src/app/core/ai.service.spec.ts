@@ -208,6 +208,50 @@ describe('AiService', () => {
     });
   });
 
+  describe('distillJobDescription', () => {
+    it('distills clean job description when active provider succeeds', async () => {
+      spyOn(service, 'resolveActiveProvider').and.resolveTo({
+        id: 'chrome-nano',
+        name: 'Mock Provider',
+        isAvailable: async () => true,
+        generateJson: async <T>() =>
+          ({
+            title: 'Senior Frontend Engineer',
+            company: 'Acme Corp',
+            description: 'Build fast web apps using Angular and TypeScript.',
+          }) as unknown as T,
+      });
+
+      const raw = 'Navigation menu Cookie Banner\nSenior Frontend Engineer at Acme Corp\nBuild fast web apps using Angular and TypeScript.\nFooter Links Privacy Policy';
+      const result = await service.distillJobDescription(raw);
+
+      expect(result.title).toBe('Senior Frontend Engineer');
+      expect(result.company).toBe('Acme Corp');
+      expect(result.description).toBe('Build fast web apps using Angular and TypeScript.');
+    });
+
+    it('falls back to trimmed raw text when active provider throws or fails', async () => {
+      spyOn(service, 'resolveActiveProvider').and.resolveTo({
+        id: 'chrome-nano',
+        name: 'Mock Provider',
+        isAvailable: async () => true,
+        generateJson: async () => {
+          throw new Error('LLM timeout');
+        },
+      });
+
+      const raw = 'Job posting details here';
+      const result = await service.distillJobDescription(raw);
+
+      expect(result.description).toBe(raw);
+    });
+
+    it('returns empty description for empty or blank input', async () => {
+      const result = await service.distillJobDescription('   ');
+      expect(result.description).toBe('');
+    });
+  });
+
   describe('testConnection', () => {
     it('returns ok and models list on successful connection', async () => {
       globalThis.fetch = jasmine.createSpy('fetch').and.resolveTo(

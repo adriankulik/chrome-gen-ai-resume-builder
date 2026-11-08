@@ -50,6 +50,7 @@ export class TriageComponent {
   readonly source = signal<'ai' | 'fallback' | null>(null);
   readonly analyzing = signal(false);
   readonly extracting = signal(false);
+  readonly distilling = signal(false);
   readonly error = signal('');
   readonly showManualInput = signal(false);
   readonly manualMode = signal(false);
@@ -165,11 +166,28 @@ export class TriageComponent {
   /** One-click extract from the active tab when running as a Chrome extension. */
   async extractFromActiveTab(): Promise<void> {
     this.extracting.set(true);
+    this.distilling.set(false);
     this.error.set('');
     try {
-      const text = await this.ext.extractFromActiveTab();
-      if (text) {
-        this.jd.set(text);
+      const result = await this.ext.extractFromActiveTab();
+      if (result?.text) {
+        let finalJobText = result.text;
+        // If not explicitly highlighted by user and AI is available, distill the raw page text
+        const provider = await this.ai.resolveActiveProvider();
+        if (!result.isUserSelection && provider) {
+          this.distilling.set(true);
+          try {
+            const distilled = await this.ai.distillJobDescription(result.text);
+            if (distilled.description?.trim()) {
+              finalJobText = distilled.description.trim();
+            }
+          } catch (err) {
+            console.warn('Job distillation error, using raw page text:', err);
+          } finally {
+            this.distilling.set(false);
+          }
+        }
+        this.jd.set(finalJobText);
         this.showManualInput.set(true);
       } else {
         this.error.set('Could not extract job description from active tab. Highlight the text or paste directly.');
@@ -178,6 +196,7 @@ export class TriageComponent {
       this.error.set(e instanceof Error ? e.message : 'Extraction failed.');
     } finally {
       this.extracting.set(false);
+      this.distilling.set(false);
     }
   }
 

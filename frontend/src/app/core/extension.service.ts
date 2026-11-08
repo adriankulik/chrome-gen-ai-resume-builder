@@ -1,5 +1,10 @@
 import { Injectable, signal } from '@angular/core';
 
+export interface ActiveTabExtraction {
+  text: string;
+  isUserSelection: boolean;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ExtensionService {
   /** True when running inside a Chrome extension environment (MV3). */
@@ -60,12 +65,12 @@ export class ExtensionService {
   /**
    * Extracts the job description from the currently active browser tab.
    * Prioritizes:
-   * 1. Any text the user currently has selected/highlighted.
+   * 1. Any text the user currently has selected/highlighted (flagged as user selection).
    * 2. Known job posting containers (LinkedIn, Indeed, Greenhouse, Lever, Workday, etc.).
    * 3. Main article / main text content.
    * Returns null if running in standard web mode or if extraction fails.
    */
-  async extractFromActiveTab(): Promise<string | null> {
+  async extractFromActiveTab(): Promise<ActiveTabExtraction | null> {
     if (!this.isExtension() || !chrome.tabs?.query || !chrome.scripting?.executeScript) {
       return null;
     }
@@ -114,7 +119,7 @@ export class ExtensionService {
             }
           }
           if (sel && sel.length >= 15) {
-            return sel;
+            return { text: sel, isUserSelection: true };
           }
 
           // 2. Specific selectors for popular job boards & applicant tracking systems
@@ -156,24 +161,46 @@ export class ExtensionService {
             'article',
           ];
 
+          let extractedText = '';
           for (const s of selectors) {
             const el = document.querySelector(s);
             if (el) {
               const text = (el as HTMLElement).innerText?.trim();
               if (text && text.length > 60) {
-                return text;
+                extractedText = text;
+                break;
               }
             }
           }
 
           // 3. Fallback: document body text
-          return document.body?.innerText?.trim() || '';
+          if (!extractedText) {
+            extractedText = document.body?.innerText?.trim() || '';
+          }
+
+          if (!extractedText) {
+            return null;
+          }
+
+          // Clean up excessive whitespace/blank lines while preserving formatting
+          const cleaned = extractedText
+            .replace(/\r\n/g, '\n')
+            .replace(/[ \t]+/g, ' ')
+            .replace(/\n{3,}/g, '\n\n')
+            .trim();
+
+          // Safe upper bound of 60,000 characters to prevent DOM runaway on massive SPAs
+          const capped = cleaned.length > 60000 ? cleaned.slice(0, 60000) : cleaned;
+          return { text: capped, isUserSelection: false };
         },
       });
 
-      const extracted = results?.[0]?.result;
-      if (typeof extracted === 'string' && extracted.trim().length > 0) {
-        return extracted.trim();
+      const extracted = results?.[0]?.result as { text: string; isUserSelection: boolean } | null;
+      if (extracted?.text && extracted.text.trim().length > 0) {
+        return {
+          text: extracted.text.trim(),
+          isUserSelection: !!extracted.isUserSelection,
+        };
       }
       return null;
     } catch (err) {
